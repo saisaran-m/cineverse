@@ -806,7 +806,24 @@ function loadMovieStream(movieId, serverIndex) {
     }, 8000);
 }
 
+// === UI Handlers ===
 function closePlayer() {
+    const modal = $('#playerModal');
+    const iframe = $('#movieIframe');
+    if (modal) modal.style.display = 'none';
+    if (iframe) iframe.src = '';
+    document.body.style.overflow = 'auto';
+    console.log('🎬 Player closed and stream stopped');
+}
+
+function closeDetail() {
+    const modal = $('#detailModal');
+    if (modal) modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+    console.log('🎬 Detail modal closed');
+}
+
+function closePlayerOriginal() {
     const iframe = $('#moviePlayer');
     iframe.src = '';
     // Reset loading state
