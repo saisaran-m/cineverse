@@ -985,7 +985,11 @@ function setupUserMenu() {
     setupProfileUI();
     setupUserSearch();
     setupUpdateManager();
+    
+    // Initialize Watch Together System
+    if (window.initWatchSystem) window.initWatchSystem();
 }
+
 
 // === User Discovery (Search) ===
 function setupUserSearch() {

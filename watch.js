@@ -10,8 +10,16 @@ let currentPendingMovie = null;
 function initWatchSystem() {
     console.log("📺 Watch System Initializing...");
     setupWatchEventListeners();
-    listenForWatchRequests();
+    
+    // Ensure we wait for auth to be ready
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            console.log("📺 Watch System: User authenticated, starting listeners.");
+            listenForWatchRequests();
+        }
+    });
 }
+
 
 function setupWatchEventListeners() {
     // Detail Modal Watch Together Button
@@ -402,7 +410,12 @@ async function sendWatchChatMessage() {
     }
 }
 
-// Global hook for app.js
+// Global hooks for app.js and HTML buttons
+window.initWatchSystem = initWatchSystem;
+window.acceptWatchInvite = acceptWatchInvite;
+window.declineWatchInvite = declineWatchInvite;
+window.endWatchParty = endWatchParty;
+window.syncPlayback = syncPlayback;
 window.setCurrentWatchMovie = (movie) => {
     currentPendingMovie = movie;
 };
