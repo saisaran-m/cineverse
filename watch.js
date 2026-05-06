@@ -262,6 +262,9 @@ function startWatchParty(sessionId) {
             currentWatchSession = { id: doc.id, ...data };
             updateWatchPartyUI(data);
         });
+        
+    // START LISTENING FOR CHAT MESSAGES
+    listenForWatchChat(sessionId);
 }
 
 function createWatchPartyOverlay() {
@@ -347,8 +350,8 @@ function updateWatchPartyUI(data) {
     }
 
     const iframe = document.getElementById('wpPlayerIframe');
-    // Using Server 2 (vidsrc.pm) as default for better reliability
-    const targetSrc = `https://vidsrc.pm/embed/movie?tmdb=${data.movieId}`;
+    // Using Server 2 (vidsrc.pm) with autoplay=1 for a better experience
+    const targetSrc = `https://vidsrc.pm/embed/movie?tmdb=${data.movieId}&autoplay=1`;
 
     
     // If it's a "play" action, we refresh the iframe to ensure sync
@@ -376,11 +379,40 @@ async function syncPlayback(action) {
 
 function endWatchParty() {
     if (watchSessionListener) watchSessionListener();
+    if (window.watchChatUnsubscribe) window.watchChatUnsubscribe();
     const overlay = document.getElementById('watchPartyOverlay');
     if (overlay) overlay.classList.remove('active');
     if (currentWatchSession) db.collection('watch_sessions').doc(currentWatchSession.id).delete();
     currentWatchSession = null;
 }
+
+function listenForWatchChat(sessionId) {
+    if (window.watchChatUnsubscribe) window.watchChatUnsubscribe();
+    
+    window.watchChatUnsubscribe = db.collection('watch_sessions').doc(sessionId)
+        .collection('messages')
+        .orderBy('timestamp', 'asc')
+        .onSnapshot(snapshot => {
+            const chatMsgs = document.getElementById('wpChatMessages');
+            if (!chatMsgs) return;
+            
+            chatMsgs.innerHTML = '';
+            snapshot.forEach(doc => {
+                const msg = doc.data();
+                const msgDiv = document.createElement('div');
+                msgDiv.style.padding = '8px 12px';
+                msgDiv.style.background = 'rgba(255,255,255,0.05)';
+                msgDiv.style.borderRadius = '10px';
+                msgDiv.style.color = '#fff';
+                msgDiv.style.fontSize = '0.8rem';
+                msgDiv.style.marginBottom = '8px';
+                msgDiv.innerHTML = `<strong>${msg.senderName}:</strong> ${msg.text}`;
+                chatMsgs.appendChild(msgDiv);
+            });
+            chatMsgs.scrollTop = chatMsgs.scrollHeight;
+        });
+}
+
 
 async function sendWatchChatMessage() {
     const input = document.getElementById('wpChatInput');
