@@ -245,8 +245,10 @@ const Chat = {
     }
 };
 
-// Global hook for app.js
+// Global hooks for app.js
 window.initChatWith = (uid, name) => Chat.initChatWith(uid, name);
+window.openChatWithUser = (uid, name) => Chat.initChatWith(uid, name);
+
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => Chat.init());
