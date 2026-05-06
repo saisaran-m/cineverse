@@ -958,10 +958,11 @@ function setupUserMenu() {
         logoutBtn.addEventListener('click', () => {
             signOut(auth).then(() => {
                 showToast('Logged out successfully');
-                setTimeout(() => window.location.reload(), 800);
+                setTimeout(() => window.location.href = 'login.html', 200);
             });
         });
     }
+
 
     // Firebase Auth Observer
     onAuthStateChanged(auth, (user) => {
@@ -1090,10 +1091,24 @@ function viewPublicProfile(uid, userData) {
     const inputs = modal.querySelectorAll('.profile-input');
     inputs.forEach(i => i.readOnly = true);
     
-    // Hide save button
+    // Hide save button and show chat button
     $('#saveProfileBtn').style.display = 'none';
     $('#uploadProgress').style.display = 'none';
     $('.avatar-upload-btn').style.display = 'none';
+    
+    const publicActions = $('#publicProfileActions');
+    if (publicActions) {
+        publicActions.style.display = 'flex';
+        const msgBtn = $('#messageUserBtn');
+        if (msgBtn) {
+            msgBtn.onclick = () => {
+                modal.classList.remove('active');
+                if (window.openChatWithUser) {
+                    window.openChatWithUser(uid, userData.displayName);
+                }
+            };
+        }
+    }
 
     // Reset modal on close
     const originalClose = $('#closeProfileBtn').onclick;
@@ -1103,6 +1118,8 @@ function viewPublicProfile(uid, userData) {
         inputs.forEach(i => i.readOnly = false);
         $('#saveProfileBtn').style.display = 'block';
         $('.avatar-upload-btn').style.display = 'flex';
+        const publicActions = $('#publicProfileActions');
+        if (publicActions) publicActions.style.display = 'none';
         modal.classList.remove('active');
     };
 }
