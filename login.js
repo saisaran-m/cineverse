@@ -1,4 +1,4 @@
-console.log('🚀 [CineVerse] login.js v4.3.5 Loaded');
+console.log('🚀 [CineVerse] login.js v4.3.6 Loaded');
 
 // === Helper for UI Feedback ===
 const setBtnLoading = (btn, isLoading, text = 'Connecting...') => {
@@ -17,49 +17,54 @@ const setBtnLoading = (btn, isLoading, text = 'Connecting...') => {
 
 const initAuthSystem = () => {
     console.log('🔐 Auth System initializing...');
-    
+
     const loginForm = document.getElementById('loginFormElement');
 
-
-
-
-    // === Google Login Logic (Super Robust) ===
+    // === Google Login Logic ===
     const setupGoogleLogins = () => {
         const googleBtns = document.querySelectorAll('.social-btn.google');
 
         googleBtns.forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.preventDefault();
-                console.log('🚀 [UI] Google Redirect Login initiated');
+                console.log('🚀 Google Login initiated');
                 setBtnLoading(btn, true);
 
                 try {
-                    // We use REDIRECT because popups are blocked by COOP policies in some browsers
-                    await window.signInWithRedirect();
+                    const provider = new firebase.auth.GoogleAuthProvider();
+                    provider.addScope('email');
+                    provider.addScope('profile');
+
+                    // Use redirect (works in all browsers, no popup blocking)
+                    await firebase.auth().signInWithRedirect(provider);
+
                 } catch (error) {
-                    console.error('❌ [UI] Redirect error:', error);
-                    showLoginToast('Login failed to start', 'error');
+                    console.error('❌ Google redirect error:', error);
+                    showLoginToast('Login failed: ' + error.message, 'error');
                     setBtnLoading(btn, false);
                 }
             });
         });
 
-        // Handle the result when coming back from Google
-        if (window.getRedirectResult) {
-            window.getRedirectResult().then(result => {
-                if (result && result.user) {
-                    console.log('✅ [UI] Google Redirect success:', result.user.email);
+        // Handle the result when coming back from Google redirect
+        firebase.auth().getRedirectResult().then(result => {
+            if (result && result.user) {
+                console.log('✅ Google Redirect success:', result.user.email);
+                showLoginToast('Welcome, ' + result.user.displayName + '!', 'success');
+                setTimeout(() => {
                     window.location.replace('index.html');
-                }
-            }).catch(error => {
-                console.error('❌ [UI] Result error:', error);
-            });
-        }
+                }, 1000);
+            }
+        }).catch(error => {
+            if (error.code !== 'auth/no-auth-event') {
+                console.error('❌ Redirect result error:', error);
+                showLoginToast('Google login error: ' + error.message, 'error');
+            }
+        });
     };
 
     // START GOOGLE LOGIN
     setupGoogleLogins();
-
 
     // === Email/Password Login Logic ===
     if (loginForm) {
@@ -92,7 +97,6 @@ const initAuthSystem = () => {
         window.auth.onAuthStateChanged((user) => {
             if (user) {
                 console.log('👤 User identified:', user.email);
-                // Wait a moment for the toast to be seen
                 setTimeout(() => {
                     window.location.replace('index.html');
                 }, 1000);
@@ -129,7 +133,7 @@ if (document.readyState === 'loading') {
     initAuthSystem();
 }
 
-// === Phone Auth Logic (Robust) ===
+// === Phone Auth Logic ===
 function setupPhoneAuth() {
     const phoneBtn = document.getElementById('sendOtpBtn');
     if (!phoneBtn) return;
@@ -144,8 +148,6 @@ function setupPhoneAuth() {
         setBtnLoading(phoneBtn, true, 'Sending Code...');
 
         try {
-            if (!window.RecaptchaVerifier) throw new Error("Recaptcha not ready");
-            
             if (!window.recaptchaVerifier) {
                 window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
                     'size': 'invisible'
@@ -154,7 +156,7 @@ function setupPhoneAuth() {
 
             const confirmationResult = await firebase.auth().signInWithPhoneNumber(phone, window.recaptchaVerifier);
             window.confirmationResult = confirmationResult;
-            
+
             document.getElementById('phoneStep1').style.display = 'none';
             document.getElementById('phoneStep2').style.display = 'block';
             showLoginToast('Code sent!', 'success');
@@ -207,7 +209,7 @@ function showLoginToast(message, type = 'info') {
     }, 3000);
 }
 
-// Add simple CSS for the toast if not already in styles
+// Add simple CSS for the toast
 const style = document.createElement('style');
 style.textContent = `
     .login-toast {
