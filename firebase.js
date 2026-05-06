@@ -51,20 +51,21 @@ window.onAuthStateChanged = (authObj, callback) => {
     if (authObj && typeof authObj.onAuthStateChanged === 'function') {
         return authObj.onAuthStateChanged(callback);
     } else {
-        if (callback) callback(null);
+        // Wait for real auth to be ready if possible, don't trigger 'logged out' logic prematurely
+        console.warn("Auth not ready for observer, waiting...");
         return () => {};
     }
 };
+
 
 // Export to window for access in other scripts
 window.auth = auth;
 window.db = db;
 window.provider = provider;
-window.signInWithEmailAndPassword = firebase.auth?.signInWithEmailAndPassword || (() => Promise.reject("Auth not ready"));
-window.createUserWithEmailAndPassword = firebase.auth?.createUserWithEmailAndPassword || (() => Promise.reject("Auth not ready"));
-window.signOut = firebase.auth?.signOut || (() => Promise.resolve());
-window.signInWithPopup = firebase.auth?.signInWithPopup || (() => Promise.reject("Popup auth not ready"));
-window.signInWithPhoneNumber = firebase.auth?.signInWithPhoneNumber || (() => Promise.reject("Phone auth not ready"));
-window.RecaptchaVerifier = firebase.auth?.RecaptchaVerifier;
-window.updateProfile = (user, profile) => user ? user.updateProfile(profile) : Promise.reject("No user");
-window.serverTimestamp = firebase.firestore?.FieldValue?.serverTimestamp || (() => Date.now());
+
+// Robust Auth Helpers
+window.signOut = () => auth.signOut();
+window.signInWithPopup = (providerObj) => auth.signInWithPopup(providerObj || provider);
+window.updateProfile = (profile) => auth.currentUser ? auth.currentUser.updateProfile(profile) : Promise.reject("No user");
+window.serverTimestamp = () => firebase.firestore.FieldValue.serverTimestamp();
+window.FieldValue = firebase.firestore.FieldValue;

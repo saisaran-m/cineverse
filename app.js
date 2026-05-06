@@ -956,12 +956,13 @@ function setupUserMenu() {
     const logoutBtn = $('#logoutBtn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
-            signOut(auth).then(() => {
+            signOut().then(() => {
                 showToast('Logged out successfully');
-                setTimeout(() => window.location.href = 'login.html', 200);
+                setTimeout(() => window.location.href = 'login.html', 300);
             });
         });
     }
+
 
 
     // Firebase Auth Observer
