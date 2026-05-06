@@ -353,7 +353,8 @@ async function loadNowPlaying() {
     const c = $('#nowPlayingRow');
     createSkeletons(c);
     const data = await tmdbFetch('/movie/now_playing', { page: 1 });
-    const movies = data?.results || getSampleMovies('now_playing');
+    let movies = data?.results;
+    if (!movies || movies.length === 0) movies = getSampleMovies('now_playing');
     c.innerHTML = '';
     movies.forEach((m, i) => c.appendChild(createMovieCard(m, i)));
 }
@@ -362,7 +363,8 @@ async function loadTrending() {
     const c = $('#trendingRow');
     createSkeletons(c);
     const data = await tmdbFetch('/trending/movie/week');
-    const movies = data?.results || getSampleMovies('trending');
+    let movies = data?.results;
+    if (!movies || movies.length === 0) movies = getSampleMovies('trending');
     c.innerHTML = '';
     movies.forEach((m, i) => c.appendChild(createMovieCard(m, i)));
 }
@@ -371,7 +373,8 @@ async function loadTopRated() {
     const c = $('#topRatedRow');
     createSkeletons(c);
     const data = await tmdbFetch('/movie/top_rated', { page: 1 });
-    const movies = data?.results || getSampleMovies('top_rated');
+    let movies = data?.results;
+    if (!movies || movies.length === 0) movies = getSampleMovies('top_rated');
     c.innerHTML = '';
     movies.forEach((m, i) => c.appendChild(createMovieCard(m, i)));
 }
@@ -380,7 +383,8 @@ async function loadUpcoming() {
     const c = $('#upcomingRow');
     createSkeletons(c);
     const data = await tmdbFetch('/movie/upcoming', { page: 1 });
-    const movies = data?.results || getSampleMovies('upcoming');
+    let movies = data?.results;
+    if (!movies || movies.length === 0) movies = getSampleMovies('upcoming');
     c.innerHTML = '';
     movies.forEach((m, i) => c.appendChild(createMovieCard(m, i)));
 }
