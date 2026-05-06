@@ -24,11 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // === Google Login Logic ===
-    if (googleBtn) {
-        googleBtn.addEventListener('click', async (e) => {
+    const handleGoogleLogin = async (btn) => {
+        if (!btn) return;
+        btn.addEventListener('click', async (e) => {
             e.preventDefault();
             console.log('🚀 Google Login initiated');
-            setBtnLoading(googleBtn, true);
+            setBtnLoading(btn, true);
 
             try {
                 if (!window.provider || !window.auth) {
@@ -41,10 +42,13 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (error) {
                 console.error('❌ Google Login error:', error);
                 showLoginToast(error.message || 'Login failed', 'error');
-                setBtnLoading(googleBtn, false);
+                setBtnLoading(btn, false);
             }
         });
-    }
+    };
+
+    handleGoogleLogin(googleBtn);
+    handleGoogleLogin(document.getElementById('googleSignupBtn'));
 
     // === Email/Password Login Logic ===
     if (loginForm) {
@@ -82,6 +86,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.location.replace('index.html');
                 }, 1000);
             }
+        });
+    }
+
+    // === UI Form Toggling ===
+    const showSignup = document.getElementById('showSignup');
+    const showLogin = document.getElementById('showLogin');
+    const loginFormEl = document.getElementById('loginForm');
+    const signupFormEl = document.getElementById('signupForm');
+
+    if (showSignup && showLogin && loginFormEl && signupFormEl) {
+        showSignup.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginFormEl.style.display = 'none';
+            signupFormEl.style.display = 'block';
+        });
+
+        showLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            signupFormEl.style.display = 'none';
+            loginFormEl.style.display = 'block';
         });
     }
 
