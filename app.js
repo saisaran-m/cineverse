@@ -1313,6 +1313,15 @@ async function handleSearch(query) {
 async function init() {
     console.log('🎬 CineVerse initializing...');
     
+    // Dismiss cinematic loading screen immediately
+    const cinemaLoader = document.getElementById('cinemaLoader');
+    if (cinemaLoader) {
+        setTimeout(() => {
+            cinemaLoader.classList.add('fade-out');
+            setTimeout(() => cinemaLoader.remove(), 600);
+        }, 100); 
+    }
+
     // Core setups
     setupNavigation();
     setupGlobalListeners();
@@ -1328,18 +1337,6 @@ async function init() {
     }
     
     loadMainContent(false); 
-
-    // Dismiss cinematic loading screen (Force reveal)
-    const cinemaLoader = document.getElementById('cinemaLoader');
-    if (cinemaLoader) {
-        setTimeout(() => {
-            cinemaLoader.classList.add('fade-out');
-            setTimeout(() => {
-                cinemaLoader.remove();
-                document.body.style.opacity = '1';
-            }, 600);
-        }, 2000); 
-    }
 }
 
 function loadMainContent(shouldScroll = true) {
