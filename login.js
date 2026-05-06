@@ -27,27 +27,35 @@ const initAuthSystem = () => {
 
     // === Google Login Logic ===
     const handleGoogleLogin = async (btn) => {
-        if (!btn) return;
+        if (!btn) {
+            console.warn("⚠️ Google button not found in UI");
+            return;
+        }
+        
         btn.addEventListener('click', async (e) => {
             e.preventDefault();
-            console.log('🚀 Google Login initiated');
+            console.log('🚀 [UI] Google Login Button Clicked');
             setBtnLoading(btn, true);
 
             try {
-                if (!window.provider || !window.auth) {
-                    throw new Error("Authentication services are not ready. Please refresh.");
+                if (!window.signInWithPopup) {
+                    throw new Error("Authentication helpers not ready. Please refresh.");
                 }
-                const result = await firebase.auth().signInWithPopup(window.provider);
-                console.log('✅ Google Login success:', result.user.email);
+                
+                const result = await window.signInWithPopup();
+                console.log('✅ [UI] Google Login successful for:', result.user.email);
                 showLoginToast('Welcome to CineVerse!', 'success');
+                
                 // Redirection is handled by the auth observer below
             } catch (error) {
-                console.error('❌ Google Login error:', error);
+                console.error('❌ [UI] Google Login error:', error);
                 showLoginToast(error.message || 'Login failed', 'error');
                 setBtnLoading(btn, false);
             }
         });
+        console.log('✅ [UI] Google Login listener attached');
     };
+
 
     handleGoogleLogin(googleBtn);
     handleGoogleLogin(document.getElementById('googleSignupBtn'));
