@@ -291,40 +291,41 @@ $('#signupFormElement').addEventListener('submit', function (e) {
 
 // === Social Login (Optimized for Instant Response) ===
 function setupSocialLogin() {
-    const googleBtn = document.querySelector('.social-btn.google');
-    if (!googleBtn) return;
+    const googleBtns = document.querySelectorAll('.social-btn.google');
+    if (!googleBtns.length) return;
 
-    // Use a single, direct listener for maximum speed
-    googleBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        
-        // Prevent multiple clicks
-        if (googleBtn.classList.contains('is-loading')) return;
-        
-        const originalContent = googleBtn.innerHTML;
-        googleBtn.classList.add('is-loading');
-        googleBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> <span>Connecting...</span>';
-        googleBtn.style.opacity = '0.7';
-        googleBtn.style.pointerEvents = 'none';
+    googleBtns.forEach(googleBtn => {
+        googleBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Prevent multiple clicks
+            if (googleBtn.classList.contains('is-loading')) return;
+            
+            const originalContent = googleBtn.innerHTML;
+            googleBtn.classList.add('is-loading');
+            googleBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> <span>Connecting...</span>';
+            googleBtn.style.opacity = '0.7';
+            googleBtn.style.pointerEvents = 'none';
 
-        // Use the global provider from firebase.js
-        signInWithPopup(auth, window.provider)
-            .then((result) => {
-                showLoginToast('Welcome back! Redirecting...', 'success');
-                setTimeout(() => window.location.replace('index.html'), 500);
-            })
-            .catch((error) => {
-                // Restore button on error
-                googleBtn.classList.remove('is-loading');
-                googleBtn.innerHTML = originalContent;
-                googleBtn.style.opacity = '1';
-                googleBtn.style.pointerEvents = 'auto';
-                
-                console.error("Auth Error:", error.code);
-                if (error.code !== 'auth/popup-closed-by-user') {
-                    showLoginToast('Google Login failed. Please try again.', 'error');
-                }
-            });
+            // Use the global provider from firebase.js
+            signInWithPopup(auth, window.provider)
+                .then((result) => {
+                    showLoginToast('Welcome back! Redirecting...', 'success');
+                    setTimeout(() => window.location.replace('index.html'), 500);
+                })
+                .catch((error) => {
+                    // Restore button on error
+                    googleBtn.classList.remove('is-loading');
+                    googleBtn.innerHTML = originalContent;
+                    googleBtn.style.opacity = '1';
+                    googleBtn.style.pointerEvents = 'auto';
+                    
+                    console.error("Auth Error:", error.code);
+                    if (error.code !== 'auth/popup-closed-by-user') {
+                        showLoginToast('Google Login failed. Please try again.', 'error');
+                    }
+                });
+        });
     });
 
     // Handle other social buttons
