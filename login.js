@@ -2,11 +2,12 @@
    CineVerse — Robust Login & Authentication
    ============================================ */
 
-document.addEventListener('DOMContentLoaded', () => {
+const initAuthSystem = () => {
     console.log('🔐 Auth System initializing...');
 
     const googleBtn = document.getElementById('googleLoginBtn');
-    const loginForm = document.getElementById('loginForm');
+    const loginForm = document.getElementById('loginFormElement'); // Fixed ID
+
     
     // === Helper for UI Feedback ===
     const setBtnLoading = (btn, isLoading, text = 'Connecting...') => {
@@ -110,7 +111,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     setupPhoneAuth();
-});
+}; // End of initAuthSystem
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAuthSystem);
+} else {
+    initAuthSystem();
+}
 
 // === Phone Auth Logic (Robust) ===
 function setupPhoneAuth() {
