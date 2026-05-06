@@ -18,9 +18,6 @@ const setBtnLoading = (btn, isLoading, text = 'Connecting...') => {
 const initAuthSystem = () => {
     console.log('🔐 Auth System initializing...');
     
-    // START GOOGLE LOGIN FIRST
-    setupGoogleLogins();
-
     const loginForm = document.getElementById('loginFormElement');
 
 
@@ -60,9 +57,8 @@ const initAuthSystem = () => {
         }
     };
 
-
-    // ... (rest of setupGoogleLogins is above)
-    };
+    // START GOOGLE LOGIN
+    setupGoogleLogins();
 
 
     // === Email/Password Login Logic ===
