@@ -1644,7 +1644,10 @@ function setupProfileUI() {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const user = auth.currentUser;
-        if (!user) return;
+        if (!user) {
+            showToast("You must be logged in to save changes.");
+            return;
+        }
 
         const saveBtn = $('#saveProfileBtn');
         const originalText = saveBtn.textContent;
@@ -1652,30 +1655,48 @@ function setupProfileUI() {
         saveBtn.textContent = 'Saving...';
 
         const data = {
-            displayName: $('#profileUsername').value,
-            bio: $('#profileBio').value,
-            suggestedMovies: $('#profileSuggestions').value,
-            updatedAt: serverTimestamp()
+            displayName: $('#profileUsername').value.trim(),
+            bio: $('#profileBio').value.trim(),
+            suggestedMovies: $('#profileSuggestions').value.trim(),
+            updatedAt: Date.now() // Reliable local fallback
         };
 
+        // Create a timeout promise
+        const timeout = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error("Connection timeout. Please check your internet or Firebase rules.")), 8000)
+        );
+
         try {
-            // Optimistic UI update for speed
-            $('#dropdownName').textContent = data.displayName;
-            updateUIAvatars(avatarImg.src);
+            console.log("Saving profile data:", data);
             
-            await db.collection('users').doc(user.uid).set(data, { merge: true });
-            await user.updateProfile({ displayName: data.displayName });
+            // Optimistic UI update
+            const dropdownName = $('#dropdownName');
+            if (dropdownName) dropdownName.textContent = data.displayName;
             
-            showToast("Profile saved successfully!");
+            // Race the save against a timeout
+            await Promise.race([
+                db.collection('users').doc(user.uid).set(data, { merge: true }),
+                timeout
+            ]);
+
+            // Update Auth Profile (Secondary)
+            try {
+                await user.updateProfile({ displayName: data.displayName });
+            } catch (authError) {
+                console.warn("Auth profile update failed, but data was saved to Firestore:", authError);
+            }
+            
+            showToast("Profile saved successfully!", "success");
             closeModal();
         } catch (error) {
             console.error("Save error:", error);
-            showToast("Failed to save profile");
+            showToast(error.message || "Failed to save profile. Check your connection.", "error");
         } finally {
             saveBtn.disabled = false;
             saveBtn.textContent = originalText;
         }
     });
+
 }
 
 // === Update Manager (Solves "Old Website" issue) ===
