@@ -347,7 +347,9 @@ function updateWatchPartyUI(data) {
     }
 
     const iframe = document.getElementById('wpPlayerIframe');
-    const targetSrc = `https://autoembed.co/movie/tmdb/${data.movieId}`;
+    // Using Server 2 (vidsrc.pm) as default for better reliability
+    const targetSrc = `https://vidsrc.pm/embed/movie?tmdb=${data.movieId}`;
+
     
     // If it's a "play" action, we refresh the iframe to ensure sync
     if (data.lastAction === 'play' && data.actionTime > (window.lastSyncTime || 0)) {
