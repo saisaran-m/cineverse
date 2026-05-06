@@ -2,27 +2,28 @@
    CineVerse — Robust Login & Authentication
    ============================================ */
 
+// === Helper for UI Feedback ===
+const setBtnLoading = (btn, isLoading, text = 'Connecting...') => {
+    if (!btn) return;
+    if (isLoading) {
+        btn.dataset.originalText = btn.innerHTML;
+        btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> ${text}`;
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+    } else {
+        btn.innerHTML = btn.dataset.originalText || btn.innerHTML;
+        btn.disabled = false;
+        btn.style.opacity = '1';
+    }
+};
+
 const initAuthSystem = () => {
     console.log('🔐 Auth System initializing...');
 
     const googleBtn = document.getElementById('googleLoginBtn');
     const loginForm = document.getElementById('loginFormElement'); // Fixed ID
 
-    
-    // === Helper for UI Feedback ===
-    const setBtnLoading = (btn, isLoading, text = 'Connecting...') => {
-        if (!btn) return;
-        if (isLoading) {
-            btn.dataset.originalText = btn.innerHTML;
-            btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> ${text}`;
-            btn.disabled = true;
-            btn.style.opacity = '0.7';
-        } else {
-            btn.innerHTML = btn.dataset.originalText || btn.innerHTML;
-            btn.disabled = false;
-            btn.style.opacity = '1';
-        }
-    };
+
 
     // === Google Login Logic ===
     const handleGoogleLogin = async (btn) => {
