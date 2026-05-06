@@ -119,9 +119,6 @@
                 <a href="#" class="nav-link" data-section="languages" id="nav-languages">
                     <i class="fas fa-globe"></i> Languages
                 </a>
-                <a href="#" class="nav-link watch-together-link" id="mobileWatchTogetherBtn">
-                    <i class="fas fa-broadcast-tower"></i> Watch Together <span class="live-badge">LIVE</span>
-                </a>
             </div>
             <div class="nav-actions">
                 <div class="search-container" id="searchContainer">
@@ -130,11 +127,6 @@
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
-
-                <button class="nav-action-btn pulse-btn" id="openWatchTogetherBtn" title="Watch Together">
-                    <i class="fas fa-users"></i>
-                    <span class="live-badge">LIVE</span>
-                </button>
 
                 <div class="user-search-container" id="userSearchContainer">
                     <button class="nav-action-btn" id="openUserSearchBtn" title="Search Users">
@@ -690,31 +682,5 @@
     <script src="watch.js"></script>
     <script src="chat.js"></script>
     <script src="app.js"></script>
-
-    <!-- EMERGENCY FAIL-SAFE: Force reveal website after 4s even if JS errors occur -->
-    <script>
-        (function() {
-            setTimeout(() => {
-                const loader = document.getElementById('cinemaLoader');
-                if (loader) {
-                    console.warn("⚠️ Emergency Fail-Safe: Loader stuck. Forcing reveal...");
-                    loader.classList.add('fade-out');
-                    setTimeout(() => {
-                        loader.remove();
-                        document.body.style.opacity = '1';
-                    }, 600);
-                }
-            }, 4000);
-
-            // Handle critical errors and force a refresh if the site breaks
-            window.onerror = function(msg, url, line) {
-                if (!sessionStorage.getItem('reloaded_on_error')) {
-                    sessionStorage.setItem('reloaded_on_error', 'true');
-                    console.error("Critical error detected. Attempting repair reload...");
-                    window.location.reload(true);
-                }
-            };
-        })();
-    </script>
 </body>
 </html>

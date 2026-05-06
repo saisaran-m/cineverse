@@ -386,20 +386,21 @@ async function loadUpcoming() {
 }
 
 async function loadHero(shouldScroll = true) {
-    let movies = [];
-    if (isUsingFallback) {
-        movies = getSampleMovies('popular');
-    } else {
-        const data = await tmdbFetch('/movie/popular');
-        movies = data?.results || getSampleMovies('popular');
-    }
+    const data = await tmdbFetch('/movie/now_playing');
+    const heroContent = $('.hero-content');
     
-    if (movies.length > 0) {
-        heroMovies = movies.slice(0, 5);
-        renderHero();
+    if (data && data.results && data.results.length > 0) {
+        heroMovies = data.results.slice(0, 5);
+        renderHero(heroMovies[0]);
         startHeroSlider();
-        if (shouldScroll) window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+        // Use local fallback data if API fails
+        const fallback = getSampleMovies('now_playing');
+        heroMovies = fallback.slice(0, 5);
+        renderHero(heroMovies[0]);
+        startHeroSlider();
     }
+    if (shouldScroll) window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function renderHero() {
@@ -944,10 +945,6 @@ function setupUserMenu() {
             if (userProfile) {
                 userProfile.style.display = 'block';
                 loadUserProfile(user);
-                // Watch Together listener
-                if (typeof listenForWatchRequests === 'function') {
-                    listenForWatchRequests();
-                }
             }
         } else {
             // Not logged in — redirect to login page immediately to lock the website
@@ -1065,28 +1062,10 @@ function viewPublicProfile(uid, userData) {
     const inputs = modal.querySelectorAll('.profile-input');
     inputs.forEach(i => i.readOnly = true);
     
-    // Hide save button, maybe add "Send Message" button later
+    // Hide save button
     $('#saveProfileBtn').style.display = 'none';
     $('#uploadProgress').style.display = 'none';
     $('.avatar-upload-btn').style.display = 'none';
-
-    // Add Message Button if it doesn't exist
-    let msgBtn = $('#profileMessageBtn');
-    if (!msgBtn) {
-        msgBtn = document.createElement('button');
-        msgBtn.id = 'profileMessageBtn';
-        msgBtn.className = 'btn btn-primary btn-glow message-user-btn';
-        msgBtn.innerHTML = '<i class="fas fa-comment"></i> Send Message';
-        $('#profileForm').appendChild(msgBtn);
-    }
-    msgBtn.style.display = 'flex';
-    
-    // Message button logic (Phase 3)
-    msgBtn.onclick = (e) => {
-        e.preventDefault();
-        modal.classList.remove('active');
-        openChatWithUser(uid, userData.displayName);
-    };
 
     // Reset modal on close
     const originalClose = $('#closeProfileBtn').onclick;
@@ -1096,15 +1075,8 @@ function viewPublicProfile(uid, userData) {
         inputs.forEach(i => i.readOnly = false);
         $('#saveProfileBtn').style.display = 'block';
         $('.avatar-upload-btn').style.display = 'flex';
-        msgBtn.style.display = 'none';
         modal.classList.remove('active');
     };
-}
-
-function openChatWithUser(uid, name) {
-    // Placeholder for Phase 3
-    showToast(`Opening chat with ${name}...`);
-    if (window.initChatWith) window.initChatWith(uid, name);
 }
 
 // === Website Feedback System ===
@@ -1339,49 +1311,14 @@ async function handleSearch(query) {
 }
 
 // === Initialization ===
-const APP_VERSION = '4.2.0'; // Force cache clear
-
 async function init() {
-    console.log(`🎬 CineVerse ${APP_VERSION} initializing...`);
+    console.log('🎬 CineVerse initializing...');
     
-    // Version Check (Force reload if version changed)
-    const storedVersion = localStorage.getItem('cineverse_version');
-    if (storedVersion && storedVersion !== APP_VERSION) {
-        localStorage.setItem('cineverse_version', APP_VERSION);
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(regs => {
-                for (let reg of regs) reg.unregister();
-                window.location.reload(true);
-            });
-            return;
-        }
-    }
-    localStorage.setItem('cineverse_version', APP_VERSION);
-
     // Core setups
     setupNavigation();
     setupGlobalListeners();
     setupUserMenu();
     setupFeedbackUI();
-    
-    // Initialize Watch System
-    if (typeof initWatchSystem === 'function') {
-        initWatchSystem();
-    }
-    
-    // Watch Together Nav Buttons
-    const triggerWatch = () => {
-        handleNavSection('home'); // Reset view
-        if (window.toggleWatchTogether) window.toggleWatchTogether();
-        else showToast("Live Sync starting...");
-        $('#navLinks')?.classList.remove('active'); // Close mobile menu
-    };
-
-    $('#openWatchTogetherBtn')?.addEventListener('click', triggerWatch);
-    $('#mobileWatchTogetherBtn')?.addEventListener('click', (e) => {
-        e.preventDefault();
-        triggerWatch();
-    });
     
     // Check if the backend is configured with an API key
     try {
@@ -1390,22 +1327,16 @@ async function init() {
     } catch (e) {
         isUsingFallback = true;
     }
+    
     loadMainContent(false); 
 
-    // Dismiss cinematic loading screen after animation completes
+    // Dismiss cinematic loading screen
     const cinemaLoader = document.getElementById('cinemaLoader');
     if (cinemaLoader) {
-        // Safety timeout: loader MUST disappear after 5s regardless
-        const loaderTimeout = setTimeout(() => {
-            cinemaLoader.classList.add('fade-out');
-            setTimeout(() => cinemaLoader.remove(), 600);
-        }, 5000);
-
         setTimeout(() => {
-            clearTimeout(loaderTimeout);
             cinemaLoader.classList.add('fade-out');
             setTimeout(() => cinemaLoader.remove(), 600);
-        }, 3500); 
+        }, 2000); 
     }
 }
 
