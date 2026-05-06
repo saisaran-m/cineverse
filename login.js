@@ -25,44 +25,40 @@ const initAuthSystem = () => {
 
 
 
-    // === Google Login Logic (Robust) ===
+    // === Google Login Logic (Super Robust) ===
     const setupGoogleLogins = () => {
         const googleBtns = document.querySelectorAll('.social-btn.google');
-        console.log(`🔍 Found ${googleBtns.length} Google buttons`);
 
         googleBtns.forEach(btn => {
-            const initiateLogin = async (e) => {
+            btn.addEventListener('click', async (e) => {
                 e.preventDefault();
-                e.stopPropagation();
-                
-                console.log('🚀 [UI] Google Login triggered via', e.type);
+                console.log('🚀 [UI] Google Redirect Login initiated');
                 setBtnLoading(btn, true);
 
                 try {
-                    if (!window.signInWithPopup) {
-                        throw new Error("Auth helpers not loaded. Please refresh.");
-                    }
-                    
-                    const result = await window.signInWithPopup();
-                    console.log('✅ [UI] Login success:', result.user.email);
-                    showLoginToast('Welcome to CineVerse!', 'success');
+                    // We use REDIRECT because popups are blocked by COOP policies in some browsers
+                    await window.signInWithRedirect();
                 } catch (error) {
-                    console.error('❌ [UI] Login error:', error);
-                    let msg = error.message || 'Login failed';
-                    if (error.code === 'auth/popup-blocked') {
-                        msg = "Please allow popups for this site to login.";
-                    }
-                    showLoginToast(msg, 'error');
+                    console.error('❌ [UI] Redirect error:', error);
+                    showLoginToast('Login failed to start', 'error');
                     setBtnLoading(btn, false);
                 }
-            };
-
-            // Listen for both click and pointerdown for maximum responsiveness
-            btn.addEventListener('click', initiateLogin);
-            btn.style.cursor = 'pointer';
-            console.log('✅ [UI] Google Login listener attached to a button');
+            });
         });
+
+        // Handle the result when coming back from Google
+        if (window.getRedirectResult) {
+            window.getRedirectResult().then(result => {
+                if (result && result.user) {
+                    console.log('✅ [UI] Google Redirect success:', result.user.email);
+                    window.location.replace('index.html');
+                }
+            }).catch(error => {
+                console.error('❌ [UI] Result error:', error);
+            });
+        }
     };
+
 
     setupGoogleLogins();
 

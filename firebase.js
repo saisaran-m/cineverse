@@ -65,7 +65,10 @@ window.provider = provider;
 
 // Robust Auth Helpers
 window.signOut = () => auth.signOut();
-window.signInWithPopup = (providerObj) => auth.signInWithPopup(providerObj || provider);
+window.signInWithPopup = () => auth.signInWithPopup(provider);
+window.signInWithRedirect = () => auth.signInWithRedirect(provider);
+window.getRedirectResult = () => auth.getRedirectResult();
+
 window.updateProfile = (profile) => auth.currentUser ? auth.currentUser.updateProfile(profile) : Promise.reject("No user");
 window.serverTimestamp = () => firebase.firestore.FieldValue.serverTimestamp();
 window.FieldValue = firebase.firestore.FieldValue;
