@@ -1,6 +1,4 @@
-/* ============================================
-   CineVerse — Robust Login & Authentication
-   ============================================ */
+console.log('🚀 [CineVerse] login.js v4.3.5 Loaded');
 
 // === Helper for UI Feedback ===
 const setBtnLoading = (btn, isLoading, text = 'Connecting...') => {
@@ -19,9 +17,12 @@ const setBtnLoading = (btn, isLoading, text = 'Connecting...') => {
 
 const initAuthSystem = () => {
     console.log('🔐 Auth System initializing...');
+    
+    // START GOOGLE LOGIN FIRST
+    setupGoogleLogins();
 
-    const googleBtn = document.getElementById('googleLoginBtn');
-    const loginForm = document.getElementById('loginFormElement'); // Fixed ID
+    const loginForm = document.getElementById('loginFormElement');
+
 
 
 
@@ -60,7 +61,8 @@ const initAuthSystem = () => {
     };
 
 
-    setupGoogleLogins();
+    // ... (rest of setupGoogleLogins is above)
+    };
 
 
     // === Email/Password Login Logic ===
