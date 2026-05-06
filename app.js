@@ -218,7 +218,7 @@ async function tmdbFetch(endpoint, params = {}) {
     Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 6000);
+    const timeout = setTimeout(() => controller.abort(), 3000);
 
     try {
         const resp = await fetch(url, { signal: controller.signal });
@@ -390,18 +390,27 @@ async function loadUpcoming() {
 }
 
 async function loadHero(shouldScroll = true) {
+    console.log('🎬 loadHero started');
     try {
         const data = await tmdbFetch('/movie/now_playing');
         if (data && data.results && data.results.length > 0) {
+            console.log('✅ TMDB data received for Hero');
             heroMovies = data.results.slice(0, 5);
         } else {
+            console.warn('⚠️ Using sample movies for Hero');
             heroMovies = getSampleMovies('now_playing').slice(0, 5);
         }
     } catch (e) {
+        console.error('❌ Failed to load Hero movies', e);
         heroMovies = getSampleMovies('now_playing').slice(0, 5);
     }
     
-    renderHero(heroMovies[0]);
+    // Safety: If somehow still empty, force-fill it
+    if (!heroMovies || heroMovies.length === 0) {
+        heroMovies = getSampleMovies('now_playing').slice(0, 5);
+    }
+    
+    renderHero();
     startHeroSlider();
     if (shouldScroll) window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -430,35 +439,34 @@ function setHeroIndex(index) {
     const movie = heroMovies[index];
     if (!movie) return;
 
-    const bg = getMovieBackdrop(movie);
+    const titleEl = $('#heroTitle');
+    const descEl = $('#heroDescription');
+    const ratingEl = $('#heroRating');
+    const yearEl = $('#heroYear');
     const backdropEl = $('#heroBackdrop');
+
+    if (titleEl) titleEl.textContent = movie.title;
+    if (descEl) descEl.textContent = movie.overview;
+    if (ratingEl) ratingEl.innerHTML = `<i class="fas fa-star"></i> ${movie.vote_average?.toFixed(1) || 'N/A'}`;
+    if (yearEl) yearEl.textContent = movie.release_date?.substring(0, 4) || 'N/A';
+    
     if (backdropEl) {
         backdropEl.style.opacity = '0';
         setTimeout(() => {
-            backdropEl.style.backgroundImage = `url(${bg})`;
+            backdropEl.style.backgroundImage = `url(${getMovieBackdrop(movie)})`;
             backdropEl.style.opacity = '1';
-        }, 50);
+        }, 300);
     }
-    
-    $('#heroTitle').textContent = movie.title;
-    $('#heroDescription').textContent = movie.overview
-        ? movie.overview.substring(0, 200) + (movie.overview.length > 200 ? '...' : '') : '';
-    
-    // Safety check for meta elements
-    const ratingEl = $('#heroRating');
-    const yearEl = $('#heroYear');
-    const langEl = $('#heroLang');
-    if (ratingEl) ratingEl.textContent = movie.vote_average?.toFixed(1) || '--';
-    if (yearEl) yearEl.textContent = movie.release_date?.substring(0, 4) || '----';
-    if (langEl) langEl.textContent = movie.original_language?.toUpperCase() || '--';
 
-    $$('.hero-dot').forEach((d, i) => d.classList.toggle('active', i === index));
+    $$('.hero-dot').forEach((dot, i) => dot.classList.toggle('active', i === index));
 
+    // Update buttons
     const watchBtn = $('#heroWatchBtn');
     const infoBtn = $('#heroInfoBtn');
     if (watchBtn) watchBtn.onclick = () => openPlayer(movie.id, movie.title, movie.release_date?.substring(0, 4) || '');
     if (infoBtn) infoBtn.onclick = () => showMovieDetail(movie);
 }
+
 
 function startHeroSlider() {
     if (heroInterval) clearInterval(heroInterval);
@@ -1326,11 +1334,12 @@ async function init() {
         }, 100); 
     }
 
-    // Core setups
-    setupNavigation();
-    setupGlobalListeners();
-    setupUserMenu();
-    setupFeedbackUI();
+    // Core setups with bulletproof error handling
+    try { setupNavigation(); } catch(e) { console.warn('setupNavigation failed', e); }
+    try { setupGlobalListeners(); } catch(e) { console.warn('setupGlobalListeners failed', e); }
+    try { setupUserMenu(); } catch(e) { console.warn('setupUserMenu failed', e); }
+    try { setupFeedbackUI(); } catch(e) { console.warn('setupFeedbackUI failed', e); }
+    try { if (window.initWatchSystem) initWatchSystem(); } catch(e) { console.warn('initWatchSystem failed', e); }
     
     // Check if the backend is configured with an API key
     try {
@@ -1340,16 +1349,32 @@ async function init() {
         isUsingFallback = true;
     }
     
-    loadMainContent(false); 
+    // Always load main content even if auth/firebase fails
+    try {
+        console.log('🚀 Calling loadMainContent...');
+        loadMainContent(false);
+    } catch(e) {
+        console.error('CRITICAL: loadMainContent failed', e);
+        // Absolute last resort fallback to prevent blank screen
+        console.log('⚠️ Entering emergency fallback mode');
+        heroMovies = getSampleMovies('now_playing').slice(0, 5);
+        renderHero();
+    }
 }
 
 function loadMainContent(shouldScroll = true) {
-    loadHero(shouldScroll);
-    loadNowPlaying();
-    loadTrending();
-    loadTopRated();
-    loadUpcoming();
-    loadGenres();
+    console.log('🚀 Starting Parallel Content Load...');
+    // Load everything at once for maximum speed
+    Promise.allSettled([
+        loadHero(shouldScroll),
+        loadNowPlaying(),
+        loadTrending(),
+        loadTopRated(),
+        loadUpcoming(),
+        loadGenres()
+    ]).then(() => {
+        console.log('✅ All content sections initialized');
+    });
 }
 
 // === Notification Logic ===

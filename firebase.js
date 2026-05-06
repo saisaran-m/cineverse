@@ -1,32 +1,70 @@
-// CineVerse Firebase Configuration
-// Converted to standard script for local file (file://) support
+/* ============================================
+   CineVerse — Firebase Configuration & Safety
+   ============================================ */
+
 const firebaseConfig = {
     apiKey: "AIzaSyAlMLhAhPwKgZiTeGWeZiE9MsyrwOc8XIg",
-    authDomain: "cineverse-d4485.firebaseapp.com",
-    projectId: "cineverse-d4485",
-    storageBucket: "cineverse-d4485.firebasestorage.app",
-    messagingSenderId: "202365297476",
-    appId: "1:202365297476:web:1e92e8f846530fe3f22d11",
-    measurementId: "G-K0PK20WK1E"
+    authDomain: "cineverse-sai.firebaseapp.com",
+    projectId: "cineverse-sai",
+    storageBucket: "cineverse-sai.appspot.com",
+    messagingSenderId: "367305260195",
+    appId: "1:367305260195:web:86566085a86d268d374474",
+    measurementId: "G-6EXV6EXV6E"
 };
 
-// Initialize Firebase using the global firebase object from the CDN tags
-firebase.initializeApp(firebaseConfig);
+// Initialize Firebase
+let app, auth, db, provider;
 
-// Create global references for the app to use
-window.auth = firebase.auth();
-window.db = firebase.firestore();
-window.provider = new firebase.auth.GoogleAuthProvider();
+try {
+    if (!firebase.apps.length) {
+        app = firebase.initializeApp(firebaseConfig);
+    } else {
+        app = firebase.app();
+    }
+    auth = firebase.auth();
+    db = firebase.firestore();
+    provider = new firebase.auth.GoogleAuthProvider();
+    console.log("🔥 Firebase initialized successfully");
+} catch (error) {
+    console.error("⚠️ Firebase initialization failed. Entering Bulletproof/Safety Mode.", error);
+    // Provide safe mock objects to prevent site-wide crashes
+    auth = { 
+        onAuthStateChanged: (cb) => { if(cb) cb(null); return () => {}; },
+        currentUser: null,
+        signOut: () => Promise.resolve()
+    };
+    db = { 
+        collection: () => ({ 
+            doc: () => ({ 
+                get: () => Promise.resolve({ exists: false }),
+                onSnapshot: () => (() => {}),
+                set: () => Promise.resolve()
+            }),
+            where: () => ({ limit: () => ({ get: () => Promise.resolve({ empty: true }) }) })
+        })
+    };
+    provider = {};
+}
 
-// Standard Firebase logic aliases
-window.collection = (db, coll) => db.collection(coll);
-window.addDoc = async (collRef, data) => collRef.add(data);
-window.serverTimestamp = () => firebase.firestore.FieldValue.serverTimestamp();
-window.signOut = (auth) => auth.signOut();
-window.onAuthStateChanged = (auth, callback) => auth.onAuthStateChanged(callback);
-window.createUserWithEmailAndPassword = (auth, email, password) => auth.createUserWithEmailAndPassword(email, password);
-window.signInWithEmailAndPassword = (auth, email, password) => auth.signInWithEmailAndPassword(email, password);
-window.signInWithPopup = (auth, provider) => auth.signInWithPopup(provider);
-window.updateProfile = (user, profile) => user.updateProfile(profile);
-window.RecaptchaVerifier = firebase.auth.RecaptchaVerifier;
-window.signInWithPhoneNumber = (auth, number, verifier) => auth.signInWithPhoneNumber(number, verifier);
+// === Global Helper for Auth Observers ===
+window.onAuthStateChanged = (authObj, callback) => {
+    if (authObj && typeof authObj.onAuthStateChanged === 'function') {
+        return authObj.onAuthStateChanged(callback);
+    } else {
+        if (callback) callback(null);
+        return () => {};
+    }
+};
+
+// Export to window for access in other scripts
+window.auth = auth;
+window.db = db;
+window.provider = provider;
+window.signInWithEmailAndPassword = firebase.auth?.signInWithEmailAndPassword || (() => Promise.reject("Auth not ready"));
+window.createUserWithEmailAndPassword = firebase.auth?.createUserWithEmailAndPassword || (() => Promise.reject("Auth not ready"));
+window.signOut = firebase.auth?.signOut || (() => Promise.resolve());
+window.signInWithPopup = firebase.auth?.signInWithPopup || (() => Promise.reject("Popup auth not ready"));
+window.signInWithPhoneNumber = firebase.auth?.signInWithPhoneNumber || (() => Promise.reject("Phone auth not ready"));
+window.RecaptchaVerifier = firebase.auth?.RecaptchaVerifier;
+window.updateProfile = (user, profile) => user ? user.updateProfile(profile) : Promise.reject("No user");
+window.serverTimestamp = firebase.firestore?.FieldValue?.serverTimestamp || (() => Date.now());
