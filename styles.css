@@ -1772,62 +1772,6 @@ html {
     display: none !important;
 }
 
-/* === Pulse Animation for Watch Together */
-.pulse-btn {
-    position: relative;
-    color: var(--accent-gold) !important;
-    background: rgba(255, 215, 0, 0.1) !important;
-    border: 1px solid rgba(255, 215, 0, 0.2) !important;
-    animation: buttonPulse 2s infinite;
-}
-
-@keyframes buttonPulse {
-    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
-    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); }
-    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
-}
-
-.pulse-btn:hover {
-    background: var(--accent-gold) !important;
-    color: var(--bg-dark) !important;
-}
-
-/* LIVE Badge Styling */
-.live-badge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: #ff0000;
-    color: white;
-    font-size: 0.6rem;
-    font-weight: 900;
-    padding: 2px 5px;
-    border-radius: 4px;
-    border: 1px solid white;
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
-    pointer-events: none;
-    animation: badgePulse 1s infinite;
-}
-
-@keyframes badgePulse {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.1); opacity: 0.8; }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-.watch-together-link {
-    color: var(--accent-gold) !important;
-    font-weight: 700 !important;
-}
-
-.watch-together-link .live-badge {
-    position: relative;
-    top: -2px;
-    right: 0;
-    margin-left: 5px;
-    display: inline-block;
-}
-
 /* === Responsive === */
 @media (max-width: 1024px) {
     .hero-title {
@@ -2710,3 +2654,27 @@ html {
     transform: scale(1.1);
     filter: drop-shadow(0 0 15px rgba(255, 60, 172, 0.7));
 }
+
+ / *   S u b t l e   W a t c h   T o g e t h e r   M i n i - B u t t o n   * / 
+ . w a t c h - t o g e t h e r - m i n i - b t n   { 
+         b a c k g r o u n d :   r g b a ( 2 5 5 ,   2 5 5 ,   2 5 5 ,   0 . 0 5 ) ; 
+         b o r d e r :   1 p x   s o l i d   r g b a ( 2 5 5 ,   2 5 5 ,   2 5 5 ,   0 . 1 ) ; 
+         c o l o r :   v a r ( - - t e x t - s e c o n d a r y ) ; 
+         w i d t h :   3 6 p x ; 
+         h e i g h t :   3 6 p x ; 
+         b o r d e r - r a d i u s :   8 p x ; 
+         d i s p l a y :   f l e x ; 
+         a l i g n - i t e m s :   c e n t e r ; 
+         j u s t i f y - c o n t e n t :   c e n t e r ; 
+         c u r s o r :   p o i n t e r ; 
+         t r a n s i t i o n :   a l l   0 . 2 s   e a s e ; 
+         m a r g i n - l e f t :   1 0 p x ; 
+ } 
+ 
+ . w a t c h - t o g e t h e r - m i n i - b t n : h o v e r   { 
+         b a c k g r o u n d :   v a r ( - - g r a d i e n t - p r i m a r y ) ; 
+         c o l o r :   w h i t e ; 
+         b o r d e r - c o l o r :   t r a n s p a r e n t ; 
+         t r a n s f o r m :   t r a n s l a t e Y ( - 2 p x ) ; 
+ }  
+ 
