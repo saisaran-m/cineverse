@@ -386,20 +386,19 @@ async function loadUpcoming() {
 }
 
 async function loadHero(shouldScroll = true) {
-    const data = await tmdbFetch('/movie/now_playing');
-    const heroContent = $('.hero-content');
-    
-    if (data && data.results && data.results.length > 0) {
-        heroMovies = data.results.slice(0, 5);
-        renderHero(heroMovies[0]);
-        startHeroSlider();
-    } else {
-        // Use local fallback data if API fails
-        const fallback = getSampleMovies('now_playing');
-        heroMovies = fallback.slice(0, 5);
-        renderHero(heroMovies[0]);
-        startHeroSlider();
+    try {
+        const data = await tmdbFetch('/movie/now_playing');
+        if (data && data.results && data.results.length > 0) {
+            heroMovies = data.results.slice(0, 5);
+        } else {
+            heroMovies = getSampleMovies('now_playing').slice(0, 5);
+        }
+    } catch (e) {
+        heroMovies = getSampleMovies('now_playing').slice(0, 5);
     }
+    
+    renderHero(heroMovies[0]);
+    startHeroSlider();
     if (shouldScroll) window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -1330,12 +1329,15 @@ async function init() {
     
     loadMainContent(false); 
 
-    // Dismiss cinematic loading screen
+    // Dismiss cinematic loading screen (Force reveal)
     const cinemaLoader = document.getElementById('cinemaLoader');
     if (cinemaLoader) {
         setTimeout(() => {
             cinemaLoader.classList.add('fade-out');
-            setTimeout(() => cinemaLoader.remove(), 600);
+            setTimeout(() => {
+                cinemaLoader.remove();
+                document.body.style.opacity = '1';
+            }, 600);
         }, 2000); 
     }
 }
