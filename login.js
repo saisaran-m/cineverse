@@ -25,40 +25,47 @@ const initAuthSystem = () => {
 
 
 
-    // === Google Login Logic ===
-    const handleGoogleLogin = async (btn) => {
-        if (!btn) {
-            console.warn("⚠️ Google button not found in UI");
-            return;
-        }
-        
-        btn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            console.log('🚀 [UI] Google Login Button Clicked');
-            setBtnLoading(btn, true);
+    // === Google Login Logic (Robust) ===
+    const setupGoogleLogins = () => {
+        const googleBtns = document.querySelectorAll('.social-btn.google');
+        console.log(`🔍 Found ${googleBtns.length} Google buttons`);
 
-            try {
-                if (!window.signInWithPopup) {
-                    throw new Error("Authentication helpers not ready. Please refresh.");
+        googleBtns.forEach(btn => {
+            const initiateLogin = async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log('🚀 [UI] Google Login triggered via', e.type);
+                setBtnLoading(btn, true);
+
+                try {
+                    if (!window.signInWithPopup) {
+                        throw new Error("Auth helpers not loaded. Please refresh.");
+                    }
+                    
+                    const result = await window.signInWithPopup();
+                    console.log('✅ [UI] Login success:', result.user.email);
+                    showLoginToast('Welcome to CineVerse!', 'success');
+                } catch (error) {
+                    console.error('❌ [UI] Login error:', error);
+                    let msg = error.message || 'Login failed';
+                    if (error.code === 'auth/popup-blocked') {
+                        msg = "Please allow popups for this site to login.";
+                    }
+                    showLoginToast(msg, 'error');
+                    setBtnLoading(btn, false);
                 }
-                
-                const result = await window.signInWithPopup();
-                console.log('✅ [UI] Google Login successful for:', result.user.email);
-                showLoginToast('Welcome to CineVerse!', 'success');
-                
-                // Redirection is handled by the auth observer below
-            } catch (error) {
-                console.error('❌ [UI] Google Login error:', error);
-                showLoginToast(error.message || 'Login failed', 'error');
-                setBtnLoading(btn, false);
-            }
+            };
+
+            // Listen for both click and pointerdown for maximum responsiveness
+            btn.addEventListener('click', initiateLogin);
+            btn.style.cursor = 'pointer';
+            console.log('✅ [UI] Google Login listener attached to a button');
         });
-        console.log('✅ [UI] Google Login listener attached');
     };
 
+    setupGoogleLogins();
 
-    handleGoogleLogin(googleBtn);
-    handleGoogleLogin(document.getElementById('googleSignupBtn'));
 
     // === Email/Password Login Logic ===
     if (loginForm) {
