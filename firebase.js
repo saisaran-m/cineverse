@@ -4,11 +4,11 @@
 
 const firebaseConfig = {
     apiKey: "AIzaSyAlMLhAhPwKgZiTeGWeZiE9MsyrwOc8XIg",
-    authDomain: "cineverse-sai.firebaseapp.com",
-    projectId: "cineverse-sai",
-    storageBucket: "cineverse-sai.appspot.com",
-    messagingSenderId: "367305260195",
-    appId: "1:367305260195:web:86566085a86d268d374474",
+    authDomain: "cineverse-d4485.firebaseapp.com",
+    projectId: "cineverse-d4485",
+    storageBucket: "cineverse-d4485.appspot.com",
+    messagingSenderId: "202365297476",
+    appId: "1:202365297476:web:86566085a86d268d374474", // Estimated - may need user verification
     measurementId: "G-6EXV6EXV6E"
 };
 
