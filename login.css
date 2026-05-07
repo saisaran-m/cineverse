@@ -126,9 +126,10 @@ body {
     height: 400px;
     background: radial-gradient(ellipse at top, rgba(0, 245, 212, 0.25) 0%, transparent 70%);
     z-index: 5;
-    pointer-events: none;
+    pointer-events: none; /* CLICK THROUGH */
     animation: projectorFlicker 4s infinite;
 }
+
 
 @keyframes projectorFlicker {
     0%, 100% { opacity: 0.4; transform: translateX(-50%) scale(1); }
@@ -274,7 +275,9 @@ body {
     );
     animation: rotateGlow 6s linear infinite;
     z-index: -1;
+    pointer-events: none; /* CLICK THROUGH */
 }
+
 
 @keyframes rotateGlow {
     from { transform: rotate(0deg); }
@@ -639,7 +642,10 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    z-index: 50; /* ALWAYS ON TOP */
 }
+
 
 .social-btn i, .social-btn span {
     pointer-events: none; /* Ensure the button gets the click */
