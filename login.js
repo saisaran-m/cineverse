@@ -88,8 +88,8 @@ const initAuthSystem = () => {
 
     const googleLoginBtn = document.getElementById('googleLoginBtn');
     const googleSignupBtn = document.getElementById('googleSignupBtn');
-    if (googleLoginBtn) googleLoginBtn.onclick = () => handleGoogleLogin(googleLoginBtn);
-    if (googleSignupBtn) googleSignupBtn.onclick = () => handleGoogleLogin(googleSignupBtn);
+    // Google Login is handled via direct onclick in HTML for maximum reliability.
+
 
 
     // =========================================
