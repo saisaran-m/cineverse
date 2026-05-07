@@ -2,6 +2,7 @@ console.log('🚀 [CineVerse] login.js v4.4.1 Loaded');
 
 window.handleGoogleSignIn = async function() {
     console.log('🚀 Google clicked!');
+    window._signingIn = true;
     try {
         const provider = new firebase.auth.GoogleAuthProvider();
         const result = await firebase.auth().signInWithPopup(provider);
@@ -9,10 +10,12 @@ window.handleGoogleSignIn = async function() {
             window.location.replace('index.html');
         }
     } catch(e) {
+        window._signingIn = false;
         console.error(e);
         alert('Google login error: ' + e.message);
     }
 };
+
 
 // === Helper for UI Feedback ===
 const setBtnLoading = (btn, isLoading, text = 'Connecting...') => {
@@ -202,11 +205,12 @@ const initAuthSystem = () => {
     // === AUTH STATE OBSERVER ===
     // =========================================
     firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
+        if (user && !window._signingIn) {
             console.log('👤 User logged in:', user.email);
             setTimeout(() => window.location.replace('index.html'), 1000);
         }
     });
+
 
     // =========================================
     // === FORM TOGGLE (Login <-> Signup) ===
