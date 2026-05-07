@@ -68,8 +68,9 @@ const initAuthSystem = () => {
 
     const googleLoginBtn = document.getElementById('googleLoginBtn');
     const googleSignupBtn = document.getElementById('googleSignupBtn');
-    if (googleLoginBtn) googleLoginBtn.addEventListener('click', (e) => { e.preventDefault(); handleGoogleLogin(googleLoginBtn); });
-    if (googleSignupBtn) googleSignupBtn.addEventListener('click', (e) => { e.preventDefault(); handleGoogleLogin(googleSignupBtn); });
+    if (googleLoginBtn) googleLoginBtn.onclick = () => handleGoogleLogin(googleLoginBtn);
+    if (googleSignupBtn) googleSignupBtn.onclick = () => handleGoogleLogin(googleSignupBtn);
+
 
     // =========================================
     // === GITHUB LOGIN ===
