@@ -1,4 +1,18 @@
-console.log('🚀 [CineVerse] login.js v4.4.0 Loaded');
+console.log('🚀 [CineVerse] login.js v4.4.1 Loaded');
+
+window.handleGoogleSignIn = async function() {
+    console.log('🚀 Google clicked!');
+    try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        const result = await firebase.auth().signInWithPopup(provider);
+        if (result.user) {
+            window.location.replace('index.html');
+        }
+    } catch(e) {
+        console.error(e);
+        alert('Google login error: ' + e.message);
+    }
+};
 
 // === Helper for UI Feedback ===
 const setBtnLoading = (btn, isLoading, text = 'Connecting...') => {
