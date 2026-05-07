@@ -48,8 +48,10 @@ const initAuthSystem = () => {
         try {
             const provider = new firebase.auth.GoogleAuthProvider();
             provider.addScope('email');
-            provider.addScope('profile');
-            await firebase.auth().signInWithRedirect(provider);
+            // Use a new tab for the auth handler (as requested)
+            const provider2 = new firebase.auth.GoogleAuthProvider();
+            window.open(`https://cineverse-sai.firebaseapp.com/__/auth/handler`, '_blank');
+
         } catch (error) {
             console.error('❌ Google error:', error);
             showLoginToast('Google login failed: ' + error.message, 'error');
