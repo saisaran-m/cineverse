@@ -1,20 +1,22 @@
 console.log('🚀 [CineVerse] login.js v4.4.1 Loaded');
 
-window.handleGoogleSignIn = async function() {
+window.handleGoogleSignIn = function() {
     console.log('🚀 Google clicked!');
-    window._signingIn = true;
-    try {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        const result = await firebase.auth().signInWithPopup(provider);
-        if (result.user) {
-            window.location.replace('index.html');
-        }
-    } catch(e) {
-        window._signingIn = false;
-        console.error(e);
-        alert('Google login error: ' + e.message);
-    }
+    // Open popup IMMEDIATELY on click - no async delay
+    const provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithPopup(provider)
+        .then(result => {
+            if (result.user) {
+                window.location.replace('index.html');
+            }
+        })
+        .catch(e => {
+            if (e.code !== 'auth/popup-closed-by-user') {
+                alert('Google login error: ' + e.message);
+            }
+        });
 };
+
 
 
 // === Helper for UI Feedback ===
