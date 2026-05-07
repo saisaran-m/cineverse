@@ -48,30 +48,23 @@ const initAuthSystem = () => {
         try {
             const provider = new firebase.auth.GoogleAuthProvider();
             provider.addScope('email');
-            // Use a new tab for the auth handler (as requested)
-            const provider2 = new firebase.auth.GoogleAuthProvider();
-            window.open(`https://cineverse-sai.firebaseapp.com/__/auth/handler`, '_blank');
+            provider.addScope('profile');
 
+            // Use popup instead of redirect
+            const result = await firebase.auth().signInWithPopup(provider);
+            if (result.user) {
+                showLoginToast('Welcome, ' + (result.user.displayName || result.user.email) + '!', 'success');
+                setTimeout(() => window.location.replace('index.html'), 1000);
+            }
         } catch (error) {
             console.error('❌ Google error:', error);
-            showLoginToast('Google login failed: ' + error.message, 'error');
+            if (error.code !== 'auth/popup-closed-by-user') {
+                showLoginToast('Google login failed: ' + error.message, 'error');
+            }
             setBtnLoading(btn, false);
         }
     };
 
-    // Handle redirect result when coming back from Google
-    firebase.auth().getRedirectResult().then(result => {
-        if (result && result.user) {
-            console.log('✅ Google success:', result.user.email);
-            showLoginToast('Welcome, ' + (result.user.displayName || result.user.email) + '!', 'success');
-            setTimeout(() => window.location.replace('index.html'), 1000);
-        }
-    }).catch(error => {
-        if (error.code && error.code !== 'auth/no-auth-event') {
-            console.error('❌ Redirect result error:', error);
-            showLoginToast('Google login error: ' + error.message, 'error');
-        }
-    });
 
     const googleLoginBtn = document.getElementById('googleLoginBtn');
     const googleSignupBtn = document.getElementById('googleSignupBtn');
