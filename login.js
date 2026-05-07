@@ -68,38 +68,9 @@ function showLoginToast(message, type = 'info') {
 const initAuthSystem = () => {
     console.log('🔐 Auth System initializing...');
 
+
     // =========================================
-    // === GOOGLE LOGIN ===
-    // =========================================
-    const handleGoogleLogin = async (btn) => {
-        console.log('🚀 Google Login initiated');
-        setBtnLoading(btn, true);
-        try {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            provider.addScope('email');
-            provider.addScope('profile');
-
-            // Use popup instead of redirect
-            const result = await firebase.auth().signInWithPopup(provider);
-            if (result.user) {
-                showLoginToast('Welcome, ' + (result.user.displayName || result.user.email) + '!', 'success');
-                setTimeout(() => window.location.replace('index.html'), 1000);
-            }
-        } catch (error) {
-            console.error('❌ Google error:', error);
-            if (error.code !== 'auth/popup-closed-by-user') {
-                showLoginToast('Google login failed: ' + error.message, 'error');
-            }
-            setBtnLoading(btn, false);
-        }
-    };
-
-
-    const googleLoginBtn = document.getElementById('googleLoginBtn');
-    const googleSignupBtn = document.getElementById('googleSignupBtn');
-    // Google Login is handled via direct onclick in HTML for maximum reliability.
-
-
+    // === GITHUB LOGIN ===
 
     // =========================================
     // === GITHUB LOGIN ===
