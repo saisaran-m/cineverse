@@ -167,16 +167,17 @@
                     <button class="social-btn google" id="googleLoginBtn" title="Login with Google" onclick="handleGoogleSignIn()">
                         <i class="fab fa-google"></i>
                     </button>
-                    <button class="social-btn phone" id="phoneLoginBtn" title="Login with Phone">
+                    <button class="social-btn phone" id="phoneLoginBtn" title="Login with Phone" onclick="handlePhoneSignIn()">
                         <i class="fas fa-phone"></i>
                     </button>
-                    <button class="social-btn github" id="githubLoginBtn">
+                    <button class="social-btn github" id="githubLoginBtn" onclick="handleGithubSignIn()">
                         <i class="fab fa-github"></i>
                     </button>
-                    <button class="social-btn twitter" id="twitterLoginBtn">
+                    <button class="social-btn twitter" id="twitterLoginBtn" onclick="handleTwitterSignIn()">
                         <i class="fab fa-twitter"></i>
                     </button>
                 </div>
+
 
                 <p class="auth-switch">
                     Don't have an account? <a href="#" id="showSignup">Create one</a>
@@ -251,16 +252,17 @@
                     <button class="social-btn google" id="googleSignupBtn" title="Login with Google" onclick="handleGoogleSignIn()">
                         <i class="fab fa-google"></i>
                     </button>
-                    <button class="social-btn phone" id="phoneSignupBtn" title="Login with Phone">
+                    <button class="social-btn phone" id="phoneSignupBtn" title="Login with Phone" onclick="handlePhoneSignIn()">
                         <i class="fas fa-phone"></i>
                     </button>
-                    <button class="social-btn github" id="githubSignupBtn">
+                    <button class="social-btn github" id="githubSignupBtn" onclick="handleGithubSignIn()">
                         <i class="fab fa-github"></i>
                     </button>
-                    <button class="social-btn twitter" id="twitterSignupBtn">
+                    <button class="social-btn twitter" id="twitterSignupBtn" onclick="handleTwitterSignIn()">
                         <i class="fab fa-twitter"></i>
                     </button>
                 </div>
+
 
                 <p class="auth-switch">
                     Already have an account? <a href="#" id="showLogin">Sign in</a>
@@ -310,7 +312,8 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     
     <script src="firebase.js?v=4.5.1"></script>
-    <script src="login.js?v=4.5.1"></script>
+    <script src="login.js?v=5.0"></script>
+
 
 
 
