@@ -67,22 +67,22 @@
             console.log('🚀 [CineVerse] Google Button Clicked');
             const provider = new firebase.auth.GoogleAuthProvider();
             
-            // Forces the browser to open the window instantly
             firebase.auth().signInWithPopup(provider)
                 .then(result => {
-                    if (result.user) {
-                        window.location.replace('index.html');
-                    }
+                    if (result.user) window.location.replace('index.html');
                 })
-                .catch(error => {
-                    console.error("Login Error:", error);
-                    if (error.code !== 'auth/popup-closed-by-user') {
-                        alert("Login Error: " + error.message);
+                .catch(e => {
+                    if (e.code !== 'auth/popup-closed-by-user') {
+                        // Fallback to redirect if popup blocked
+                        console.log("Popup blocked or failed, switching to Redirect...");
+                        const provider2 = new firebase.auth.GoogleAuthProvider();
+                        firebase.auth().signInWithRedirect(provider2);
                     }
                 });
         };
     </script>
 </head>
+
 
 
 <body>

@@ -1,28 +1,30 @@
-console.log('🚀 [CineVerse] login.js v4.5.1 Loaded');
+console.log('🚀 [CineVerse] login.js v4.5.2 Loaded');
 
-// Force-link the Google buttons just in case HTML onclick is ignored
-const attachGoogleHandlers = () => {
-    console.log('🔗 [CineVerse] Attaching Google Handlers...');
-    const loginBtn = document.getElementById('googleLoginBtn');
-    const signupBtn = document.getElementById('googleSignupBtn');
+// === Coming Soon Handlers ===
+const setupComingSoon = () => {
+    const buttons = [
+        { id: 'phoneLoginBtn', name: 'Phone Login' },
+        { id: 'githubLoginBtn', name: 'GitHub Login' },
+        { id: 'twitterLoginBtn', name: 'Twitter Login' },
+        { id: 'phoneSignupBtn', name: 'Phone Signup' },
+        { id: 'githubSignupBtn', name: 'GitHub Signup' },
+        { id: 'twitterSignupBtn', name: 'Twitter Signup' }
+    ];
 
-    if (loginBtn) {
-        loginBtn.onclick = (e) => {
-            e.preventDefault();
-            if (window.handleGoogleSignIn) window.handleGoogleSignIn();
-        };
-    }
-    if (signupBtn) {
-        signupBtn.onclick = (e) => {
-            e.preventDefault();
-            if (window.handleGoogleSignIn) window.handleGoogleSignIn();
-        };
-    }
+    buttons.forEach(btn => {
+        const el = document.getElementById(btn.id);
+        if (el) {
+            el.onclick = (e) => {
+                e.preventDefault();
+                alert(`${btn.name} is coming soon! Please use Google for now. 🎬`);
+            };
+        }
+    });
 };
 
-// Run immediately and also on DOMContentLoaded
-attachGoogleHandlers();
-document.addEventListener('DOMContentLoaded', attachGoogleHandlers);
+document.addEventListener('DOMContentLoaded', setupComingSoon);
+setupComingSoon();
+
 
 
 
