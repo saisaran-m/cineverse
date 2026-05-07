@@ -1,6 +1,28 @@
-console.log('🚀 [CineVerse] login.js v4.4.2 Loaded');
+console.log('🚀 [CineVerse] login.js v4.5.1 Loaded');
 
-// Google Login is handled via direct onclick in HTML (defined in <head>) for maximum reliability.
+// Force-link the Google buttons just in case HTML onclick is ignored
+const attachGoogleHandlers = () => {
+    console.log('🔗 [CineVerse] Attaching Google Handlers...');
+    const loginBtn = document.getElementById('googleLoginBtn');
+    const signupBtn = document.getElementById('googleSignupBtn');
+
+    if (loginBtn) {
+        loginBtn.onclick = (e) => {
+            e.preventDefault();
+            if (window.handleGoogleSignIn) window.handleGoogleSignIn();
+        };
+    }
+    if (signupBtn) {
+        signupBtn.onclick = (e) => {
+            e.preventDefault();
+            if (window.handleGoogleSignIn) window.handleGoogleSignIn();
+        };
+    }
+};
+
+// Run immediately and also on DOMContentLoaded
+attachGoogleHandlers();
+document.addEventListener('DOMContentLoaded', attachGoogleHandlers);
 
 
 
