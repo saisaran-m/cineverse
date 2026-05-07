@@ -45,43 +45,8 @@
         }
     </script>
 
-    <!-- Firebase Core (Must load first) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-
-    <script>
-        // CORRECT CONFIG FOR PROJECT cineverse-d4485
-        const config = {
-            apiKey: "AIzaSyAlMLhAhPwKgZiTeGWeZiE9MsyrwOc8XIg",
-            authDomain: "cineverse-d4485.firebaseapp.com",
-            projectId: "cineverse-d4485",
-            storageBucket: "cineverse-d4485.appspot.com",
-        };
-
-        // Initialize immediately in the head
-        if (!firebase.apps.length) {
-            firebase.initializeApp(config);
-        }
-
-        window.handleGoogleSignIn = function() {
-            console.log('🚀 [CineVerse] Google Button Clicked');
-            const provider = new firebase.auth.GoogleAuthProvider();
-            
-            firebase.auth().signInWithPopup(provider)
-                .then(result => {
-                    if (result.user) window.location.replace('index.html');
-                })
-                .catch(e => {
-                    if (e.code !== 'auth/popup-closed-by-user') {
-                        // Fallback to redirect if popup blocked
-                        console.log("Popup blocked or failed, switching to Redirect...");
-                        const provider2 = new firebase.auth.GoogleAuthProvider();
-                        firebase.auth().signInWithRedirect(provider2);
-                    }
-                });
-        };
-    </script>
 </head>
+
 
 
 
@@ -309,10 +274,13 @@
 
     <!-- Firebase SDK (Standard version to support local file loading) -->
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     
     <script src="firebase.js?v=4.5.1"></script>
     <script src="login.js?v=5.0"></script>
+
 
 
 
