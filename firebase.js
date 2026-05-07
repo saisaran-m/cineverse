@@ -4,10 +4,11 @@
 
 const firebaseConfig = {
     apiKey: "AIzaSyAlMLhAhPwKgZiTeGWeZiE9MsyrwOc8XIg",
-    authDomain: "cineverse-d4485.firebaseapp.com",
+    authDomain: "cineverse-sai.firebaseapp.com",
 
-    projectId: "cineverse-d4485",
-    storageBucket: "cineverse-d4485.appspot.com",
+    projectId: "cineverse-sai",
+    storageBucket: "cineverse-sai.appspot.com",
+
 
 
     messagingSenderId: "202365297476",
@@ -66,11 +67,9 @@ window.auth = auth;
 window.db = db;
 window.provider = provider;
 
+
 // Robust Auth Helpers
 window.signOut = () => auth.signOut();
-window.signInWithPopup = () => auth.signInWithPopup(provider);
-window.signInWithRedirect = () => auth.signInWithRedirect(provider);
-window.getRedirectResult = () => auth.getRedirectResult();
 
 window.updateProfile = (profile) => auth.currentUser ? auth.currentUser.updateProfile(profile) : Promise.reject("No user");
 window.serverTimestamp = () => firebase.firestore.FieldValue.serverTimestamp();
