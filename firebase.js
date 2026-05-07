@@ -4,10 +4,12 @@
 
 const firebaseConfig = {
     apiKey: "AIzaSyAlMLhAhPwKgZiTeGWeZiE9MsyrwOc8XIg",
-    authDomain: "cineverse-sai.firebaseapp.com",
+    authDomain: "cineverse-d4485.firebaseapp.com",
 
     projectId: "cineverse-d4485",
     storageBucket: "cineverse-d4485.appspot.com",
+
+
     messagingSenderId: "202365297476",
     appId: "1:202365297476:web:86566085a86d268d374474", // Estimated - may need user verification
     measurementId: "G-6EXV6EXV6E"

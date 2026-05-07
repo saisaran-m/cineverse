@@ -50,18 +50,24 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
     <script>
-        // Pre-define the function so it never fails on click
+        // CORRECT CONFIG FOR PROJECT cineverse-d4485
+        const config = {
+            apiKey: "AIzaSyAlMLhAhPwKgZiTeGWeZiE9MsyrwOc8XIg",
+            authDomain: "cineverse-d4485.firebaseapp.com",
+            projectId: "cineverse-d4485",
+            storageBucket: "cineverse-d4485.appspot.com",
+        };
+
+        // Initialize immediately in the head
+        if (!firebase.apps.length) {
+            firebase.initializeApp(config);
+        }
+
         window.handleGoogleSignIn = function() {
             console.log('🚀 [CineVerse] Google Button Clicked');
-            
-            if (typeof firebase === 'undefined' || !firebase.auth) {
-                alert("System is still initializing... please wait 2 seconds.");
-                return;
-            }
-
             const provider = new firebase.auth.GoogleAuthProvider();
             
-            // Trigger popup directly from the click event
+            // Forces the browser to open the window instantly
             firebase.auth().signInWithPopup(provider)
                 .then(result => {
                     if (result.user) {
@@ -77,6 +83,7 @@
         };
     </script>
 </head>
+
 
 <body>
     <!-- Animated Background -->
@@ -302,8 +309,9 @@
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     
-    <script src="firebase.js?v=4.4.1"></script>
-    <script src="login.js?v=4.4.1"></script>
+    <script src="firebase.js?v=4.5.0"></script>
+    <script src="login.js?v=4.5.0"></script>
+
 
 
 
