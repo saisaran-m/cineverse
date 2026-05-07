@@ -2,8 +2,9 @@ console.log('🚀 [CineVerse] login.js v4.4.1 Loaded');
 
 window.handleGoogleSignIn = function() {
     console.log('🚀 Google clicked!');
-    // Open popup IMMEDIATELY on click - no async delay
+    // DON'T disable the button - just open the popup immediately
     const provider = new firebase.auth.GoogleAuthProvider();
+
     firebase.auth().signInWithPopup(provider)
         .then(result => {
             if (result.user) {
