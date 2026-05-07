@@ -1,22 +1,7 @@
-console.log('🚀 [CineVerse] login.js v4.4.1 Loaded');
+console.log('🚀 [CineVerse] login.js v4.4.2 Loaded');
 
-window.handleGoogleSignIn = function() {
-    console.log('🚀 Google clicked!');
-    // DON'T disable the button - just open the popup immediately
-    const provider = new firebase.auth.GoogleAuthProvider();
+// Google Login is handled via direct onclick in HTML (defined in <head>) for maximum reliability.
 
-    firebase.auth().signInWithPopup(provider)
-        .then(result => {
-            if (result.user) {
-                window.location.replace('index.html');
-            }
-        })
-        .catch(e => {
-            if (e.code !== 'auth/popup-closed-by-user') {
-                alert('Google login error: ' + e.message);
-            }
-        });
-};
 
 
 

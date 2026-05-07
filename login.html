@@ -44,7 +44,40 @@
             });
         }
     </script>
+
+    <!-- Firebase Core (Must load first) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+    <script>
+        // Pre-define the function so it never fails on click
+        window.handleGoogleSignIn = function() {
+            console.log('🚀 [CineVerse] Google Button Clicked');
+            
+            if (typeof firebase === 'undefined' || !firebase.auth) {
+                alert("System is still initializing... please wait 2 seconds.");
+                return;
+            }
+
+            const provider = new firebase.auth.GoogleAuthProvider();
+            
+            // Trigger popup directly from the click event
+            firebase.auth().signInWithPopup(provider)
+                .then(result => {
+                    if (result.user) {
+                        window.location.replace('index.html');
+                    }
+                })
+                .catch(error => {
+                    console.error("Login Error:", error);
+                    if (error.code !== 'auth/popup-closed-by-user') {
+                        alert("Login Error: " + error.message);
+                    }
+                });
+        };
+    </script>
 </head>
+
 <body>
     <!-- Animated Background -->
     <div class="login-bg">
@@ -267,12 +300,11 @@
 
     <!-- Firebase SDK (Standard version to support local file loading) -->
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     
     <script src="firebase.js?v=4.4.1"></script>
     <script src="login.js?v=4.4.1"></script>
+
 
 
 
