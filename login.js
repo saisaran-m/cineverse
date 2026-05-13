@@ -1,18 +1,65 @@
-console.log('🚀 [CineVerse] login.js v5.0 Loaded');
+console.log('🚀 [CineVerse] login.js v5.2 Loaded');
 
-// Global Google Sign In - called directly from HTML onclick
-window.handleGoogleSignIn = function() {
-    console.log('🚀 Google button clicked!');
-    var provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithPopup(provider)
+// Handle redirect result (for when popup was blocked and redirect was used)
+if (typeof firebase !== 'undefined' && firebase.auth) {
+    firebase.auth().getRedirectResult()
         .then(function(result) {
-            console.log('✅ Google success:', result.user.email);
-            window.location.href = 'index.html';
+            if (result && result.user) {
+                console.log('✅ Google redirect success:', result.user.email);
+                window.location.href = 'index.html';
+            }
         })
         .catch(function(error) {
-            console.error('❌ Google error:', error.code, error.message);
-            if (error.code !== 'auth/popup-closed-by-user') {
-                alert('Login failed: ' + error.message);
+            console.error('❌ Redirect result error:', error.code, error.message);
+        });
+}
+
+// Global Google Sign In - called directly from HTML onclick
+// Uses popup first, falls back to redirect if popup is blocked
+window.handleGoogleSignIn = function() {
+    console.log('🚀 Google button clicked!');
+    
+    // Visual feedback immediately
+    var btn = document.getElementById('googleLoginBtn') || document.getElementById('googleSignupBtn');
+    if (btn) {
+        btn.style.opacity = '0.6';
+        btn.style.pointerEvents = 'none';
+    }
+    
+    var provider = new firebase.auth.GoogleAuthProvider();
+    provider.addScope('email');
+    provider.addScope('profile');
+    
+    // Try popup first
+    firebase.auth().signInWithPopup(provider)
+        .then(function(result) {
+            console.log('✅ Google popup success:', result.user.email);
+            showToast('Welcome, ' + (result.user.displayName || result.user.email) + '!', 'success');
+            setTimeout(function() { window.location.href = 'index.html'; }, 800);
+        })
+        .catch(function(error) {
+            console.error('❌ Google popup error:', error.code, error.message);
+            
+            // If popup was blocked or failed, try redirect
+            if (error.code === 'auth/popup-blocked' || 
+                error.code === 'auth/cancelled-popup-request' ||
+                error.code === 'auth/internal-error') {
+                console.log('🔄 Popup blocked, trying redirect...');
+                showToast('Redirecting to Google...', 'info');
+                firebase.auth().signInWithRedirect(provider);
+                return;
+            }
+            
+            // Reset button
+            if (btn) {
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+            }
+            
+            if (error.code === 'auth/popup-closed-by-user') {
+                showToast('Login cancelled', 'info');
+            } else {
+                showToast('Google login failed: ' + error.message, 'error');
             }
         });
 };

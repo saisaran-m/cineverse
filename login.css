@@ -260,22 +260,6 @@ body {
     will-change: transform;
     transition: transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.1s ease;
     position: relative;
-    overflow: hidden;
-}
-
-.auth-card::before {
-    content: '';
-    position: absolute;
-    top: -50%; left: -50%;
-    width: 200%; height: 200%;
-    background: conic-gradient(
-        transparent, 
-        rgba(0, 245, 212, 0.3), 
-        transparent 30%
-    );
-    animation: rotateGlow 6s linear infinite;
-    z-index: -1;
-    pointer-events: none; /* CLICK THROUGH */
 }
 
 
