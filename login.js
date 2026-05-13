@@ -18,42 +18,36 @@ if (typeof firebase !== 'undefined' && firebase.auth) {
 // Uses popup first, falls back to redirect if popup is blocked
 window.handleGoogleSignIn = function() {
     console.log('🚀 Google button clicked!');
-    alert('Google button clicked! Opening login...');
     
     try {
         var provider = new firebase.auth.GoogleAuthProvider();
-        provider.addScope('email');
-        provider.addScope('profile');
         
         // Try popup first
         firebase.auth().signInWithPopup(provider)
             .then(function(result) {
                 console.log('✅ Google popup success:', result.user.email);
-                showToast('Welcome, ' + (result.user.displayName || result.user.email) + '!', 'success');
-                setTimeout(function() { window.location.href = 'index.html'; }, 800);
+                window.location.href = 'index.html';
             })
             .catch(function(error) {
                 console.error('❌ Google popup error:', error.code, error.message);
-                alert('Popup error: ' + error.code + ' - ' + error.message);
                 
                 // If popup was blocked, try redirect
                 if (error.code === 'auth/popup-blocked' || 
                     error.code === 'auth/cancelled-popup-request' ||
                     error.code === 'auth/internal-error') {
-                    console.log('🔄 Popup blocked, trying redirect...');
                     firebase.auth().signInWithRedirect(provider);
                     return;
                 }
                 
                 if (error.code !== 'auth/popup-closed-by-user') {
-                    showToast('Google login failed: ' + error.message, 'error');
+                    alert('Login failed: ' + error.message);
                 }
             });
     } catch(e) {
-        alert('CRITICAL ERROR: ' + e.message);
-        console.error('CRITICAL:', e);
+        alert('Error: ' + e.message);
     }
 };
+
 
 
 // Global GitHub Sign In
