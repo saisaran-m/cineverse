@@ -1,9 +1,9 @@
 /* ============================================
    CineVerse — Email Dispatch Engine v3.0
-   Backend Serverless + Resend Secure Delivery
+   Backend Serverless + Gmail Secure SMTP Delivery
    ============================================ */
 
-console.log('📧 [CineVerse] Email Dispatch Engine v3.0 Loaded (Resend Secure API)');
+console.log('📧 [CineVerse] Email Dispatch Engine v3.0 Loaded (Gmail Secure SMTP)');
 
 (function() {
     'use strict';
@@ -467,7 +467,7 @@ console.log('📧 [CineVerse] Email Dispatch Engine v3.0 Loaded (Resend Secure A
                 <div class="cv-email-modal-meta">
                     <div class="cv-email-modal-meta-row">
                         <span class="cv-email-modal-meta-label">From:</span>
-                        <span class="cv-email-modal-meta-value">CineVerse &lt;noreply@cineverse.app&gt;</span>
+                        <span class="cv-email-modal-meta-value">CineVerse &lt;cinverseofficial@gmail.com&gt;</span>
                     </div>
                     <div class="cv-email-modal-meta-row">
                         <span class="cv-email-modal-meta-label">To:</span>
@@ -558,7 +558,7 @@ console.log('📧 [CineVerse] Email Dispatch Engine v3.0 Loaded (Resend Secure A
                 console.log('📧 [CineVerse] Server returned simulation mode:', data.message);
                 showEmailToast(email, name, type, true);
             } else if (data.success) {
-                console.log('📧 [CineVerse] ✅ Email sent successfully via secure Resend endpoint!', data);
+                console.log('📧 [CineVerse] ✅ Email sent successfully via secure Gmail SMTP endpoint!', data);
                 showEmailToast(email, name, type, false);
             } else {
                 console.warn('📧 [CineVerse] Backend email dispatch issue, falling back:', data);
