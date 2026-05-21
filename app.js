@@ -850,11 +850,68 @@ function closeDetail() {
 }
 
 // === Toast ===
-function showToast(message) {
+function showToast(message, typeOrDuration = 3000, duration = 3000) {
     const toast = $('#toast');
-    $('#toastMessage').textContent = message;
+    const toastMessage = $('#toastMessage');
+    if (!toast || !toastMessage) return;
+
+    let type = 'info';
+    let displayDuration = 3000;
+
+    if (typeof typeOrDuration === 'number') {
+        displayDuration = typeOrDuration;
+    } else if (typeof typeOrDuration === 'string') {
+        type = typeOrDuration;
+        if (typeof duration === 'number') {
+            displayDuration = duration;
+        }
+    }
+
+    // Set text
+    toastMessage.textContent = message;
+
+    // Set icon and colors based on type
+    let iconEl = toast.querySelector('i');
+    if (!iconEl) {
+        iconEl = document.createElement('i');
+        toast.insertBefore(iconEl, toastMessage);
+    }
+
+    // Reset classes
+    iconEl.className = 'fas';
+    
+    // Style and icon selection based on type
+    toast.style.borderLeft = 'none';
+    toast.style.boxShadow = 'var(--shadow-glow)';
+
+    if (type === 'success') {
+        iconEl.className = 'fas fa-check-circle';
+        iconEl.style.color = '#10B981';
+        toast.style.borderLeft = '4px solid #10B981';
+    } else if (type === 'error') {
+        iconEl.className = 'fas fa-exclamation-circle';
+        iconEl.style.color = '#EF4444';
+        toast.style.borderLeft = '4px solid #EF4444';
+    } else if (type === 'warning') {
+        iconEl.className = 'fas fa-exclamation-triangle';
+        iconEl.style.color = '#F59E0B';
+        toast.style.borderLeft = '4px solid #F59E0B';
+    } else {
+        iconEl.className = 'fas fa-info-circle';
+        iconEl.style.color = '#3B82F6';
+        toast.style.borderLeft = '4px solid #3B82F6';
+    }
+
+    // Clear any existing active timeouts
+    if (toast.timeoutId) {
+        clearTimeout(toast.timeoutId);
+    }
+
     toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3000);
+
+    toast.timeoutId = setTimeout(() => {
+        toast.classList.remove('show');
+    }, displayDuration);
 }
 
 // === Navigation ===
@@ -1493,39 +1550,7 @@ function loadMainContent(shouldScroll = true) {
 }
 
 // === Notification Logic ===
-function showToast(message, duration = 3000) {
-    let toast = document.getElementById('toastNotification');
-    if (!toast) {
-        toast = document.createElement('div');
-        toast.id = 'toastNotification';
-        toast.style.cssText = `
-            position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
-            background: rgba(18, 18, 42, 0.95); color: white; padding: 12px 24px;
-            border-radius: 50px; font-size: 0.9rem; font-weight: 600;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); z-index: 10000;
-            border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center;
-            gap: 10px; animation: slideUpToast 0.3s ease forwards;
-        `;
-        document.body.appendChild(toast);
-
-        // Add keyframes
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideUpToast {
-                from { bottom: 80px; opacity: 0; }
-                to { bottom: 100px; opacity: 1; }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-
-    toast.innerHTML = `<span>✨</span> ${message}`;
-    toast.style.display = 'flex';
-
-    setTimeout(() => {
-        toast.style.display = 'none';
-    }, duration);
-}
+// Removed duplicate showToast function to unify with main showToast
 
 document.addEventListener('DOMContentLoaded', init);
 
