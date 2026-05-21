@@ -237,13 +237,13 @@ async function tmdbFetch(endpoint, params = {}) {
 // === Image Helpers ===
 function getMoviePoster(movie) {
     if (movie._posterUrl) return movie._posterUrl;
-    if (movie.poster_path) return `${CONFIG.IMG_BASE}/w500${movie.poster_path}`;
+    if (movie.poster_path) return `${CONFIG.IMG_BASE}/w342${movie.poster_path}`; // Optimized from w500 to w342 for ultra-fast loading
     return generatePosterSvg(movie.title || 'Movie', '#ff3cac', '#784ba0');
 }
 
 function getMovieBackdrop(movie) {
     if (movie._backdropUrl) return movie._backdropUrl;
-    if (movie.backdrop_path) return `${CONFIG.IMG_BASE}/original${movie.backdrop_path}`;
+    if (movie.backdrop_path) return `${CONFIG.IMG_BASE}/w780${movie.backdrop_path}`; // Optimized from original to w780 for 10x faster loading
     return generateBackdropSvg(movie.title || 'CineVerse');
 }
 
@@ -580,6 +580,7 @@ function toggleMainSections(show) {
 // === Movie Detail Modal ===
 async function showMovieDetail(movie) {
     const modal = $('#detailModal');
+    if (modal) modal.style.display = '';
 
     $('#detailBackdrop').style.backgroundImage = `url(${getMovieBackdrop(movie)})`;
     $('#detailPoster').src = getMoviePoster(movie);
@@ -701,6 +702,9 @@ async function launchPlayer(movieId, title, year) {
     currentServer = 0;
     currentLang = '';
 
+    const modal = $('#playerModal');
+    if (modal) modal.style.display = '';
+
     $('#playerTitle').textContent = title;
     $('#playerYear').textContent = year;
     $('#playerLoading').classList.remove('hidden');
@@ -811,7 +815,7 @@ function closePlayer() {
     const modal = $('#playerModal');
     const iframe = $('#moviePlayer');
     if (modal) {
-        modal.style.display = 'none';
+        modal.style.display = '';
         modal.classList.remove('active');
     }
     if (iframe) iframe.src = '';
@@ -832,7 +836,7 @@ function closePlayer() {
 function closeDetail() {
     const modal = $('#detailModal');
     if (modal) {
-        modal.style.display = 'none';
+        modal.style.display = '';
         modal.classList.remove('active');
     }
     document.body.style.overflow = 'auto';
