@@ -43,26 +43,52 @@ window.handleGoogleSignIn = function() {
         btn.style.pointerEvents = 'none';
     });
 
-    try {
-        var provider = new firebase.auth.GoogleAuthProvider();
-        provider.addScope('email');
-        provider.addScope('profile');
-
-        // Use redirect — this is the MOST RELIABLE method
-        // It works on ALL browsers, mobile, and desktop
-        // The user will be redirected to Google, then back to this page
-        // where getRedirectResult() above catches the result
-        console.log('🔄 Redirecting to Google...');
-        firebase.auth().signInWithRedirect(provider);
-
-    } catch(e) {
-        console.error('❌ Google sign-in error:', e);
-        // Reset buttons
+    function resetButtons() {
         allGoogleBtns.forEach(function(btn) {
             btn.innerHTML = '<i class="fab fa-google"></i>';
             btn.style.opacity = '1';
             btn.style.pointerEvents = 'auto';
         });
+    }
+
+    try {
+        var provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope('email');
+        provider.addScope('profile');
+
+        // Try popup first (works on desktop, some mobile)
+        console.log('🔄 Attempting Google popup sign-in...');
+        firebase.auth().signInWithPopup(provider)
+            .then(function(result) {
+                console.log('✅ Google login success:', result.user.email);
+                showToast('Welcome, ' + (result.user.displayName || result.user.email) + '!', 'success');
+                setTimeout(function() { window.location.href = 'index.html'; }, 800);
+            })
+            .catch(function(error) {
+                console.error('❌ Google popup error:', error.code, error.message);
+                
+                // If popup was blocked, fall back to redirect
+                if (error.code === 'auth/popup-blocked' || 
+                    error.code === 'auth/cancelled-popup-request' ||
+                    error.code === 'auth/internal-error') {
+                    console.log('🔄 Popup blocked — using redirect instead...');
+                    showToast('Redirecting to Google...', 'info');
+                    firebase.auth().signInWithRedirect(provider);
+                    return;
+                }
+                
+                resetButtons();
+                
+                if (error.code === 'auth/popup-closed-by-user') {
+                    showToast('Login cancelled', 'info');
+                } else {
+                    showToast('Login failed: ' + error.message, 'error');
+                }
+            });
+
+    } catch(e) {
+        console.error('❌ Google sign-in error:', e);
+        resetButtons();
         showToast('Error: ' + e.message, 'error');
     }
 };
