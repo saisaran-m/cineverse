@@ -207,8 +207,14 @@ async function tmdbFetch(endpoint, params = {}) {
     
     // If we've already detected we should use fallback, go direct
     if (isUsingFallback) {
+        const fallbackKey = 'AIzaSyAlMLhAhPwKgZiTeGWeZiE9MsyrwOc8XIg';
+        if (fallbackKey.startsWith('AIzaSy') || fallbackKey === 'YOUR_API_KEY_HERE') {
+            // Firebase API key mistakenly configured as TMDB key, or unconfigured key.
+            // Avoid calling TMDB with invalid credentials (which 401s) to eliminate unnecessary network lag.
+            return null;
+        }
         url = new URL(`${CONFIG.TMDB_BASE}${endpoint}`);
-        url.searchParams.append('api_key', 'AIzaSyAlMLhAhPwKgZiTeGWeZiE9MsyrwOc8XIg'); // Fallback Key
+        url.searchParams.append('api_key', fallbackKey); // Fallback Key
     } else {
         // Try the secure proxy first
         url = new URL(window.location.origin + '/api/tmdb');
@@ -1381,13 +1387,52 @@ async function handleSearch(query) {
     section.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
     const data = await tmdbFetch('/search/movie', { query: query.trim() });
-    const movies = data?.results || [];
+    let movies = data?.results;
     
     grid.innerHTML = '';
-    if (movies.length === 0) {
-        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">No movies found. Try another search!</p>';
+    let isMockResults = false;
+    
+    if (!movies || movies.length === 0) {
+        // Fallback to local demo/mock search across all available lists (popular, hindi, korean, japanese)
+        const q = query.trim().toLowerCase();
+        const all = [
+            ...SAMPLE_MOVIES.popular,
+            ...SAMPLE_MOVIES.hindi,
+            ...SAMPLE_MOVIES.korean,
+            ...SAMPLE_MOVIES.japanese
+        ];
+        
+        // Remove duplicates by ID to ensure a clean result set
+        const uniqueMap = new Map();
+        all.forEach(m => uniqueMap.set(m.id, m));
+        const uniqueAll = Array.from(uniqueMap.values());
+        
+        movies = uniqueAll.filter(m => 
+            m.title.toLowerCase().includes(q) || 
+            (m.overview && m.overview.toLowerCase().includes(q)) ||
+            (m.original_title && m.original_title.toLowerCase().includes(q))
+        );
+        isMockResults = true;
+    }
+    
+    if (!movies || movies.length === 0) {
+        grid.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px 20px; color: var(--text-muted);">
+                <p style="font-size: 1.1rem; margin-bottom: 8px;">No matches found for "${escapeXml(query)}" in offline mode.</p>
+                <p style="font-size: 0.9rem; margin-bottom: 24px; opacity: 0.8;">Try searching: <strong>"Venom", "Deadpool", "Dune", "Stree", "Parasite", "Spirited"</strong></p>
+                <h3 style="color: var(--text); margin-bottom: 20px; text-align: left; border-left: 4px solid var(--accent); padding-left: 10px; font-weight: 600;">Recommended Movies</h3>
+            </div>
+        `;
+        // Append popular mock movies so the page is never empty
+        SAMPLE_MOVIES.popular.forEach((m, i) => grid.appendChild(createMovieCard(m, i)));
     } else {
         movies.forEach((m, i) => grid.appendChild(createMovieCard(m, i)));
+        if (isMockResults) {
+            const note = document.createElement('p');
+            note.style.cssText = 'grid-column: 1/-1; text-align: center; margin-top: 20px; color: var(--text-muted); font-size: 0.85rem; opacity: 0.8;';
+            note.innerHTML = `<i class="fas fa-info-circle"></i> Showing matches from offline demo database.`;
+            grid.appendChild(note);
+        }
     }
 }
 
