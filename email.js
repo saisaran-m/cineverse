@@ -1,12 +1,36 @@
 /* ============================================
-   CineVerse — Email Dispatch Engine v1.0
-   Beautiful email notifications on login/signup
+   CineVerse — Email Dispatch Engine v2.0
+   EmailJS Integration — Sends to ANY email, FREE
    ============================================ */
 
-console.log('📧 [CineVerse] Email Dispatch Engine v1.0 Loaded');
+console.log('📧 [CineVerse] Email Dispatch Engine v2.0 Loaded (EmailJS)');
 
 (function() {
     'use strict';
+
+    // ──────────────────────────────────────────
+    // EMAILJS SDK LOADER
+    // ──────────────────────────────────────────
+    const emailjsScript = document.createElement('script');
+    emailjsScript.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+    emailjsScript.onload = function() {
+        // Initialize EmailJS with your public key
+        // Users: Replace 'YOUR_PUBLIC_KEY' with your EmailJS public key
+        if (window.emailjs && window.CINEVERSE_EMAILJS_PUBLIC_KEY) {
+            emailjs.init(window.CINEVERSE_EMAILJS_PUBLIC_KEY);
+            console.log('📧 [CineVerse] EmailJS SDK initialized');
+        }
+    };
+    document.head.appendChild(emailjsScript);
+
+    // ──────────────────────────────────────────
+    // CONFIGURATION — Set your EmailJS credentials here
+    // ──────────────────────────────────────────
+    // Get these FREE from https://www.emailjs.com:
+    window.CINEVERSE_EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
+    window.CINEVERSE_EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID';
+    window.CINEVERSE_EMAILJS_TEMPLATE_WELCOME = 'YOUR_WELCOME_TEMPLATE_ID';
+    window.CINEVERSE_EMAILJS_TEMPLATE_LOGIN = 'YOUR_LOGIN_TEMPLATE_ID';
 
     // ──────────────────────────────────────────
     // INJECT CSS FOR EMAIL TOAST & MODAL
@@ -392,7 +416,6 @@ console.log('📧 [CineVerse] Email Dispatch Engine v1.0 Loaded');
     // SHOW EMAIL NOTIFICATION TOAST
     // ──────────────────────────────────────────
     function showEmailToast(email, name, type, wasSimulated) {
-        // Remove any existing toast
         const existing = document.querySelector('.cv-email-toast');
         if (existing) existing.remove();
 
@@ -407,7 +430,7 @@ console.log('📧 [CineVerse] Email Dispatch Engine v1.0 Loaded');
                 <div class="cv-email-toast-icon">📧</div>
                 <div>
                     <p class="cv-email-toast-title">${isWelcome ? 'Welcome Email Sent!' : 'Login Alert Sent!'}</p>
-                    <p class="cv-email-toast-sub">${wasSimulated ? 'Simulation Mode • Click to preview' : 'Delivered successfully'}</p>
+                    <p class="cv-email-toast-sub">${wasSimulated ? 'Simulation Mode • Click to preview' : 'Delivered successfully to inbox'}</p>
                 </div>
             </div>
             <div class="cv-email-toast-body">
@@ -416,26 +439,23 @@ console.log('📧 [CineVerse] Email Dispatch Engine v1.0 Loaded');
                     <div class="cv-email-toast-to">${email}</div>
                     <div class="cv-email-toast-msg">${isWelcome ? 'Welcome to CineVerse!' : 'Thanks for logging in!'}</div>
                 </div>
-                <span class="cv-email-toast-badge ${wasSimulated ? 'simulated' : 'sent'}">${wasSimulated ? 'Preview' : 'Sent'}</span>
+                <span class="cv-email-toast-badge ${wasSimulated ? 'simulated' : 'sent'}">${wasSimulated ? 'Preview' : 'Sent ✓'}</span>
             </div>
             <div class="cv-email-toast-hint">Tap to ${wasSimulated ? 'preview email template' : 'view sent email'}</div>
         `;
 
         document.body.appendChild(toast);
 
-        // Slide in
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 toast.classList.add('visible');
             });
         });
 
-        // Click to open preview modal
         toast.addEventListener('click', () => {
             showEmailPreviewModal(email, name, type, wasSimulated);
         });
 
-        // Auto-dismiss after 8 seconds
         setTimeout(() => {
             toast.classList.add('hiding');
             toast.classList.remove('visible');
@@ -444,10 +464,9 @@ console.log('📧 [CineVerse] Email Dispatch Engine v1.0 Loaded');
     }
 
     // ──────────────────────────────────────────
-    // EMAIL PREVIEW MODAL (FULL HTML RENDER)
+    // EMAIL PREVIEW MODAL
     // ──────────────────────────────────────────
     function showEmailPreviewModal(email, name, type, wasSimulated) {
-        // Remove existing modal
         const existingModal = document.querySelector('.cv-email-modal-overlay');
         if (existingModal) existingModal.remove();
 
@@ -466,13 +485,13 @@ console.log('📧 [CineVerse] Email Dispatch Engine v1.0 Loaded');
                         <div class="cv-email-modal-dot yellow"></div>
                         <div class="cv-email-modal-dot green"></div>
                     </div>
-                    <div class="cv-email-modal-label">${wasSimulated ? '📋 Email Preview (Simulation)' : '✅ Email Delivered'}</div>
+                    <div class="cv-email-modal-label">${wasSimulated ? '📋 Email Preview (Simulation)' : '✅ Email Delivered to Inbox'}</div>
                     <button class="cv-email-modal-close" id="cvEmailModalClose">✕</button>
                 </div>
                 <div class="cv-email-modal-meta">
                     <div class="cv-email-modal-meta-row">
                         <span class="cv-email-modal-meta-label">From:</span>
-                        <span class="cv-email-modal-meta-value">CineVerse &lt;noreply@cineverse-sai.vercel.app&gt;</span>
+                        <span class="cv-email-modal-meta-value">CineVerse &lt;noreply@cineverse.app&gt;</span>
                     </div>
                     <div class="cv-email-modal-meta-row">
                         <span class="cv-email-modal-meta-label">To:</span>
@@ -491,14 +510,12 @@ console.log('📧 [CineVerse] Email Dispatch Engine v1.0 Loaded');
 
         document.body.appendChild(overlay);
 
-        // Activate with animation
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 overlay.classList.add('active');
             });
         });
 
-        // Inject email HTML into iframe
         setTimeout(() => {
             const iframe = document.getElementById('cvEmailIframe');
             if (iframe) {
@@ -507,16 +524,12 @@ console.log('📧 [CineVerse] Email Dispatch Engine v1.0 Loaded');
                 doc.open();
                 doc.write(emailHTML);
                 doc.close();
-                // Auto-resize iframe
                 setTimeout(() => {
-                    try {
-                        iframe.style.height = doc.body.scrollHeight + 'px';
-                    } catch(e) {}
+                    try { iframe.style.height = doc.body.scrollHeight + 'px'; } catch(e) {}
                 }, 200);
             }
         }, 100);
 
-        // Close handlers
         const closeModal = () => {
             overlay.classList.remove('active');
             setTimeout(() => overlay.remove(), 450);
@@ -548,43 +561,55 @@ console.log('📧 [CineVerse] Email Dispatch Engine v1.0 Loaded');
 
         console.log(`📧 [CineVerse] Dispatching ${type} email to ${email}...`);
 
-        // Detect local/offline mode
-        const isLocal = window.location.protocol === 'file:' ||
-                        window.location.hostname === 'localhost' ||
-                        window.location.hostname === '127.0.0.1';
+        const isWelcome = type === 'welcome';
+        const publicKey = window.CINEVERSE_EMAILJS_PUBLIC_KEY;
+        const serviceId = window.CINEVERSE_EMAILJS_SERVICE_ID;
+        const templateId = isWelcome
+            ? window.CINEVERSE_EMAILJS_TEMPLATE_WELCOME
+            : window.CINEVERSE_EMAILJS_TEMPLATE_LOGIN;
 
-        if (isLocal) {
-            console.log('📧 [CineVerse] Local environment detected — simulating email');
+        // Check if EmailJS is configured
+        const isConfigured = publicKey && publicKey !== 'YOUR_PUBLIC_KEY' &&
+                             serviceId && serviceId !== 'YOUR_SERVICE_ID' &&
+                             templateId && !templateId.startsWith('YOUR_');
+
+        if (!isConfigured || !window.emailjs) {
+            console.log('📧 [CineVerse] EmailJS not configured — showing simulation preview');
             showEmailToast(email, name, type, true);
             return { success: true, simulated: true };
         }
 
-        // Attempt to call the serverless API
+        // Send real email via EmailJS
         try {
-            const response = await fetch('/api/send-email', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, name, type })
+            const currentTime = new Date().toLocaleString('en-US', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+                hour: '2-digit', minute: '2-digit'
             });
 
-            const data = await response.json();
+            const templateParams = {
+                to_email: email,
+                to_name: name,
+                user_email: email,
+                user_name: name,
+                login_time: currentTime,
+                email_type: type,
+                subject: isWelcome
+                    ? `🎬 Welcome to CineVerse, ${name}!`
+                    : `🔐 Login Alert — CineVerse`,
+                message: isWelcome
+                    ? `Thank you for joining the CineVerse family! You now have access to thousands of movies from every language and genre — all completely free.`
+                    : `Thank you for logging into CineVerse! We noticed a new sign-in to your account. If this was you, enjoy your movies!`,
+                site_url: 'https://cineverse-sai.vercel.app/'
+            };
 
-            if (data.simulated) {
-                console.log('📧 [CineVerse] Server returned simulation mode:', data.message);
-                showEmailToast(email, name, type, true);
-            } else if (data.success) {
-                console.log('📧 [CineVerse] ✅ Email sent successfully!', data);
-                showEmailToast(email, name, type, false);
-            } else {
-                console.warn('📧 [CineVerse] Email dispatch issue:', data);
-                showEmailToast(email, name, type, true);
-            }
-
-            return data;
+            await emailjs.send(serviceId, templateId, templateParams);
+            console.log('📧 [CineVerse] ✅ Email sent successfully via EmailJS!');
+            showEmailToast(email, name, type, false);
+            return { success: true, simulated: false };
         } catch (error) {
-            console.warn('📧 [CineVerse] Fetch error — falling back to simulation:', error.message);
+            console.warn('📧 [CineVerse] EmailJS error — falling back to simulation:', error);
             showEmailToast(email, name, type, true);
-            return { success: true, simulated: true, error: error.message };
+            return { success: true, simulated: true, error: error.message || error.text };
         }
     };
 
