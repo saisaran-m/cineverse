@@ -605,6 +605,25 @@ console.log('📧 [CineVerse] Email Dispatch Engine v3.0 Loaded (Gmail Secure SM
             return { success: true, simulated: true, error: error.message };
         }
     };
+    
+    // Automatically check for pending emails to dispatch upon page load (e.g. after login redirection)
+    if (typeof localStorage !== 'undefined') {
+        const pendingJSON = localStorage.getItem('cineverse_pending_email');
+        if (pendingJSON) {
+            try {
+                const pending = JSON.parse(pendingJSON);
+                localStorage.removeItem('cineverse_pending_email'); // Clear immediately to avoid loops
+                console.log('📧 [CineVerse] Found pending email in localStorage, dispatching in 800ms...', pending);
+                setTimeout(function() {
+                    if (window.sendCineVerseEmail) {
+                        window.sendCineVerseEmail(pending.email, pending.name, pending.type);
+                    }
+                }, 800); // 800ms delay to let the page load/fade-in animations finish smoothly
+            } catch (e) {
+                console.error('📧 [CineVerse] Error parsing pending email from localStorage:', e);
+            }
+        }
+    }
 
     console.log('📧 [CineVerse] Email engine ready — window.sendCineVerseEmail() available');
 })();
