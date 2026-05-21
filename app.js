@@ -957,6 +957,7 @@ function setupUserMenu() {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
             signOut().then(() => {
+                localStorage.removeItem('cineverse_logged_in');
                 showToast('Logged out successfully');
                 setTimeout(() => window.location.href = 'login.html', 300);
             });
@@ -969,6 +970,11 @@ function setupUserMenu() {
     onAuthStateChanged(auth, (user) => {
         if (user) {
             // Logged in — reveal website, show avatar, hide login button
+            localStorage.setItem('cineverse_logged_in', 'true');
+            if (window.cineverse_redirect_timeout) {
+                clearTimeout(window.cineverse_redirect_timeout);
+                window.cineverse_redirect_timeout = null;
+            }
             document.body.style.opacity = '1';
             loadRecentlyWatched();
             if (loginBtn) loginBtn.style.display = 'none';
@@ -977,8 +983,25 @@ function setupUserMenu() {
                 loadUserProfile(user);
             }
         } else {
-            // Not logged in — redirect to login page immediately to lock the website
-            window.location.replace('login.html');
+            // Not logged in — check backup flag first to prevent premature/false redirects
+            if (localStorage.getItem('cineverse_logged_in') === 'true') {
+                console.log('⏳ Firebase auth initializing or slow... using backup flag.');
+                document.body.style.opacity = '1';
+                
+                // Wait up to 3 seconds for Firebase to initialize, if it still says null, redirect
+                if (!window.cineverse_redirect_timeout) {
+                    window.cineverse_redirect_timeout = setTimeout(() => {
+                        if (!auth.currentUser) {
+                            console.log('🚪 Backup flag expired, redirecting to login');
+                            localStorage.removeItem('cineverse_logged_in');
+                            window.location.replace('login.html');
+                        }
+                    }, 3000);
+                }
+            } else {
+                // Not logged in and no backup flag — redirect immediately
+                window.location.replace('login.html');
+            }
         }
     });
 

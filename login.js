@@ -78,6 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(function(result) {
             if (result && result.user) {
                 console.log('✅ Google login success:', result.user.email);
+                localStorage.setItem('cineverse_logged_in', 'true');
                 showToast('Welcome, ' + (result.user.displayName || result.user.email) + '!', 'success');
                 setTimeout(function() {
                     window.location.href = 'index.html';
@@ -99,6 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
             console.log('👤 Already logged in:', user.email);
+            localStorage.setItem('cineverse_logged_in', 'true');
             window.location.href = 'index.html';
         }
     });
@@ -121,6 +123,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             firebase.auth().signInWithEmailAndPassword(email, password)
                 .then(function() {
+                    localStorage.setItem('cineverse_logged_in', 'true');
                     showToast('Welcome back!', 'success');
                     setTimeout(function() { window.location.href = 'index.html'; }, 1000);
                 })
@@ -163,6 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     return result.user.updateProfile({ displayName: name });
                 })
                 .then(function() {
+                    localStorage.setItem('cineverse_logged_in', 'true');
                     showToast('Account created! Welcome!', 'success');
                     setTimeout(function() { window.location.href = 'index.html'; }, 1000);
                 })
