@@ -133,6 +133,7 @@ function showBypassModal() {
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🔐 Auth System initializing...');
+    var isActivelyLoggingIn = false;
 
     // 1. Particle Canvas Simulation
     initParticleCanvas();
@@ -165,6 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
+            isActivelyLoggingIn = true;
             console.log('🚀 Google button clicked!');
 
             // Visual feedback
@@ -198,17 +200,20 @@ document.addEventListener('DOMContentLoaded', function() {
                             console.log('✅ Google login success via popup:', result.user.email);
                             localStorage.setItem('cineverse_logged_in', 'true');
                             showToast('Welcome, ' + (result.user.displayName || result.user.email) + '!', 'success');
-                            // Send login email notification
+                            // Send login email notification and wait for dispatch before redirecting
                             if (window.sendCineVerseEmail) {
                                 window.sendCineVerseEmail(
                                     result.user.email,
                                     result.user.displayName || result.user.email,
                                     result.additionalUserInfo && result.additionalUserInfo.isNewUser ? 'welcome' : 'login_alert'
-                                );
-                            }
-                            setTimeout(function() {
+                                ).then(function() {
+                                    window.location.href = 'index.html';
+                                }).catch(function() {
+                                    window.location.href = 'index.html';
+                                });
+                            } else {
                                 window.location.href = 'index.html';
-                            }, 1500);
+                            }
                         }
                     })
                     .catch(function(error) {
@@ -262,17 +267,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.log('✅ Google redirect success:', result.user.email);
                     localStorage.setItem('cineverse_logged_in', 'true');
                     showToast('Welcome, ' + (result.user.displayName || result.user.email) + '!', 'success');
-                    // Send login email notification
+                    // Send login email notification and wait for dispatch before redirecting
                     if (window.sendCineVerseEmail) {
                         window.sendCineVerseEmail(
                             result.user.email,
                             result.user.displayName || result.user.email,
                             'login_alert'
-                        );
-                    }
-                    setTimeout(function() {
+                        ).then(function() {
+                            window.location.href = 'index.html';
+                        }).catch(function() {
+                            window.location.href = 'index.html';
+                        });
+                    } else {
                         window.location.href = 'index.html';
-                    }, 1500);
+                    }
                 }
             })
             .catch(function(error) {
@@ -284,7 +292,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // DYNAMIC REDIRECT
         // ------------------------------------------
         firebase.auth().onAuthStateChanged(function(user) {
-            if (user) {
+            if (user && !isActivelyLoggingIn) {
                 console.log('👤 Already authenticated:', user.email);
                 localStorage.setItem('cineverse_logged_in', 'true');
                 window.location.href = 'index.html';
@@ -309,16 +317,20 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.classList.add('loading');
             btn.querySelector('.btn-text').textContent = 'Signing in...';
 
+            isActivelyLoggingIn = true;
             firebase.auth().signInWithEmailAndPassword(email, password)
                 .then(function(result) {
                     localStorage.setItem('cineverse_logged_in', 'true');
                     showToast('Welcome back!', 'success');
-                    // Send login alert email
+                    // Send login alert email and wait for dispatch before redirecting
                     if (window.sendCineVerseEmail) {
                         var user = result.user || {};
-                        window.sendCineVerseEmail(user.email || email, user.displayName || email, 'login_alert');
+                        window.sendCineVerseEmail(user.email || email, user.displayName || email, 'login_alert')
+                            .then(function() { window.location.href = 'index.html'; })
+                            .catch(function() { window.location.href = 'index.html'; });
+                    } else {
+                        window.location.href = 'index.html';
                     }
-                    setTimeout(function() { window.location.href = 'index.html'; }, 1500);
                 })
                 .catch(function(error) {
                     btn.disabled = false;
@@ -358,6 +370,7 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.classList.add('loading');
             btn.querySelector('.btn-text').textContent = 'Creating...';
 
+            isActivelyLoggingIn = true;
             firebase.auth().createUserWithEmailAndPassword(email, password)
                 .then(function(result) {
                     return result.user.updateProfile({ displayName: name }).then(function() { return result; });
@@ -365,11 +378,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(function(result) {
                     localStorage.setItem('cineverse_logged_in', 'true');
                     showToast('Account created! Welcome to CineVerse!', 'success');
-                    // Send welcome email to new user
+                    // Send welcome email to new user and wait for dispatch before redirecting
                     if (window.sendCineVerseEmail) {
-                        window.sendCineVerseEmail(email, name, 'welcome');
+                        window.sendCineVerseEmail(email, name, 'welcome')
+                            .then(function() { window.location.href = 'index.html'; })
+                            .catch(function() { window.location.href = 'index.html'; });
+                    } else {
+                        window.location.href = 'index.html';
                     }
-                    setTimeout(function() { window.location.href = 'index.html'; }, 1500);
                 })
                 .catch(function(error) {
                     btn.disabled = false;
