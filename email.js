@@ -1,36 +1,12 @@
 /* ============================================
-   CineVerse — Email Dispatch Engine v2.0
-   EmailJS Integration — Sends to ANY email, FREE
+   CineVerse — Email Dispatch Engine v3.0
+   Backend Serverless + Resend Secure Delivery
    ============================================ */
 
-console.log('📧 [CineVerse] Email Dispatch Engine v2.0 Loaded (EmailJS)');
+console.log('📧 [CineVerse] Email Dispatch Engine v3.0 Loaded (Resend Secure API)');
 
 (function() {
     'use strict';
-
-    // ──────────────────────────────────────────
-    // EMAILJS SDK LOADER
-    // ──────────────────────────────────────────
-    const emailjsScript = document.createElement('script');
-    emailjsScript.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
-    emailjsScript.onload = function() {
-        // Initialize EmailJS with your public key
-        // Users: Replace 'YOUR_PUBLIC_KEY' with your EmailJS public key
-        if (window.emailjs && window.CINEVERSE_EMAILJS_PUBLIC_KEY) {
-            emailjs.init(window.CINEVERSE_EMAILJS_PUBLIC_KEY);
-            console.log('📧 [CineVerse] EmailJS SDK initialized');
-        }
-    };
-    document.head.appendChild(emailjsScript);
-
-    // ──────────────────────────────────────────
-    // CONFIGURATION — Set your EmailJS credentials here
-    // ──────────────────────────────────────────
-    // Get these FREE from https://www.emailjs.com:
-    window.CINEVERSE_EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
-    window.CINEVERSE_EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID';
-    window.CINEVERSE_EMAILJS_TEMPLATE_WELCOME = 'YOUR_WELCOME_TEMPLATE_ID';
-    window.CINEVERSE_EMAILJS_TEMPLATE_LOGIN = 'YOUR_LOGIN_TEMPLATE_ID';
 
     // ──────────────────────────────────────────
     // INJECT CSS FOR EMAIL TOAST & MODAL
@@ -548,7 +524,7 @@ console.log('📧 [CineVerse] Email Dispatch Engine v2.0 Loaded (EmailJS)');
     }
 
     // ──────────────────────────────────────────
-    // MAIN DISPATCH FUNCTION
+    // MAIN DISPATCH FUNCTION (Vercel Serverless Secure API)
     // ──────────────────────────────────────────
     window.sendCineVerseEmail = async function(email, name, type) {
         if (!email) {
@@ -559,57 +535,41 @@ console.log('📧 [CineVerse] Email Dispatch Engine v2.0 Loaded (EmailJS)');
         type = type || 'login_alert';
         name = name || 'Movie Lover';
 
-        console.log(`📧 [CineVerse] Dispatching ${type} email to ${email}...`);
+        console.log(`📧 [CineVerse] Dispatching ${type} email to ${email} via Serverless API...`);
 
-        const isWelcome = type === 'welcome';
-        const publicKey = window.CINEVERSE_EMAILJS_PUBLIC_KEY;
-        const serviceId = window.CINEVERSE_EMAILJS_SERVICE_ID;
-        const templateId = isWelcome
-            ? window.CINEVERSE_EMAILJS_TEMPLATE_WELCOME
-            : window.CINEVERSE_EMAILJS_TEMPLATE_LOGIN;
-
-        // Check if EmailJS is configured
-        const isConfigured = publicKey && publicKey !== 'YOUR_PUBLIC_KEY' &&
-                             serviceId && serviceId !== 'YOUR_SERVICE_ID' &&
-                             templateId && !templateId.startsWith('YOUR_');
-
-        if (!isConfigured || !window.emailjs) {
-            console.log('📧 [CineVerse] EmailJS not configured — showing simulation preview');
+        // Detect local file protocol to avoid fetch CORS blocking in raw files
+        const isLocalFile = window.location.protocol === 'file:';
+        if (isLocalFile) {
+            console.log('📧 [CineVerse] Local file protocol detected — simulating email');
             showEmailToast(email, name, type, true);
             return { success: true, simulated: true };
         }
 
-        // Send real email via EmailJS
         try {
-            const currentTime = new Date().toLocaleString('en-US', {
-                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-                hour: '2-digit', minute: '2-digit'
+            const response = await fetch('/api/send-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, name, type })
             });
 
-            const templateParams = {
-                to_email: email,
-                to_name: name,
-                user_email: email,
-                user_name: name,
-                login_time: currentTime,
-                email_type: type,
-                subject: isWelcome
-                    ? `🎬 Welcome to CineVerse, ${name}!`
-                    : `🔐 Login Alert — CineVerse`,
-                message: isWelcome
-                    ? `Thank you for joining the CineVerse family! You now have access to thousands of movies from every language and genre — all completely free.`
-                    : `Thank you for logging into CineVerse! We noticed a new sign-in to your account. If this was you, enjoy your movies!`,
-                site_url: 'https://cineverse-sai.vercel.app/'
-            };
+            const data = await response.json();
 
-            await emailjs.send(serviceId, templateId, templateParams);
-            console.log('📧 [CineVerse] ✅ Email sent successfully via EmailJS!');
-            showEmailToast(email, name, type, false);
-            return { success: true, simulated: false };
+            if (data.simulated) {
+                console.log('📧 [CineVerse] Server returned simulation mode:', data.message);
+                showEmailToast(email, name, type, true);
+            } else if (data.success) {
+                console.log('📧 [CineVerse] ✅ Email sent successfully via secure Resend endpoint!', data);
+                showEmailToast(email, name, type, false);
+            } else {
+                console.warn('📧 [CineVerse] Backend email dispatch issue, falling back:', data);
+                showEmailToast(email, name, type, true);
+            }
+
+            return data;
         } catch (error) {
-            console.warn('📧 [CineVerse] EmailJS error — falling back to simulation:', error);
+            console.warn('📧 [CineVerse] API fetch failed — falling back to simulation:', error.message);
             showEmailToast(email, name, type, true);
-            return { success: true, simulated: true, error: error.message || error.text };
+            return { success: true, simulated: true, error: error.message };
         }
     };
 
