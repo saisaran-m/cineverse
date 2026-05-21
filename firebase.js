@@ -4,7 +4,7 @@
 
 const firebaseConfig = {
     apiKey: "AIzaSyAlMLhAhPwKgZiTeGWeZiE9MsyrwOc8XIg",
-    authDomain: "cineverse-sai.firebaseapp.com",
+    authDomain: "cineverse-sai.vercel.app",
 
     projectId: "cineverse-sai",
     storageBucket: "cineverse-sai.appspot.com",

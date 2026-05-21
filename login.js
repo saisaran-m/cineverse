@@ -1,90 +1,93 @@
-console.log('🚀 [CineVerse] login.js v5.3 Loaded');
+console.log('🚀 [CineVerse] login.js v6.0 Loaded');
 
-// Handle redirect result (for when popup was blocked and redirect was used)
-if (typeof firebase !== 'undefined' && firebase.auth) {
+// ============================================
+// STEP 1: Handle redirect result FIRST
+// When user comes back from Google sign-in redirect,
+// this catches the result and sends them to index.html
+// ============================================
+(function() {
+    if (typeof firebase === 'undefined' || !firebase.auth) {
+        console.error('❌ Firebase not loaded yet!');
+        return;
+    }
+
     firebase.auth().getRedirectResult()
         .then(function(result) {
             if (result && result.user) {
-                console.log('✅ Google redirect success:', result.user.email);
-                window.location.href = 'index.html';
+                console.log('✅ Redirect login success:', result.user.email);
+                showToast('Welcome, ' + (result.user.displayName || result.user.email) + '!', 'success');
+                setTimeout(function() {
+                    window.location.href = 'index.html';
+                }, 500);
             }
         })
         .catch(function(error) {
             console.error('❌ Redirect result error:', error.code, error.message);
+            if (error.code === 'auth/account-exists-with-different-credential') {
+                showToast('An account already exists with this email using a different provider.', 'error');
+            }
         });
-}
+})();
 
-// Global Google Sign In - called directly from HTML onclick
-// Uses popup first, falls back to redirect if popup is blocked
+// ============================================
+// STEP 2: Google Sign In — REDIRECT method (most reliable)
+// ============================================
 window.handleGoogleSignIn = function() {
     console.log('🚀 Google button clicked!');
-    
+
+    // Immediate visual feedback
+    var allGoogleBtns = document.querySelectorAll('.social-btn.google');
+    allGoogleBtns.forEach(function(btn) {
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        btn.style.opacity = '0.7';
+        btn.style.pointerEvents = 'none';
+    });
+
     try {
         var provider = new firebase.auth.GoogleAuthProvider();
-        
-        // Try popup first
-        firebase.auth().signInWithPopup(provider)
-            .then(function(result) {
-                console.log('✅ Google popup success:', result.user.email);
-                window.location.href = 'index.html';
-            })
-            .catch(function(error) {
-                console.error('❌ Google popup error:', error.code, error.message);
-                
-                // If popup was blocked, try redirect
-                if (error.code === 'auth/popup-blocked' || 
-                    error.code === 'auth/cancelled-popup-request' ||
-                    error.code === 'auth/internal-error') {
-                    firebase.auth().signInWithRedirect(provider);
-                    return;
-                }
-                
-                if (error.code !== 'auth/popup-closed-by-user') {
-                    alert('Login failed: ' + error.message);
-                }
-            });
+        provider.addScope('email');
+        provider.addScope('profile');
+
+        // Use redirect — this is the MOST RELIABLE method
+        // It works on ALL browsers, mobile, and desktop
+        // The user will be redirected to Google, then back to this page
+        // where getRedirectResult() above catches the result
+        console.log('🔄 Redirecting to Google...');
+        firebase.auth().signInWithRedirect(provider);
+
     } catch(e) {
-        alert('Error: ' + e.message);
+        console.error('❌ Google sign-in error:', e);
+        // Reset buttons
+        allGoogleBtns.forEach(function(btn) {
+            btn.innerHTML = '<i class="fab fa-google"></i>';
+            btn.style.opacity = '1';
+            btn.style.pointerEvents = 'auto';
+        });
+        showToast('Error: ' + e.message, 'error');
     }
 };
 
-
-
-// Global GitHub Sign In
+// ============================================
+// STEP 3: Other social sign-ins
+// ============================================
 window.handleGithubSignIn = function() {
     var provider = new firebase.auth.GithubAuthProvider();
-    firebase.auth().signInWithPopup(provider)
-        .then(function(result) {
-            window.location.href = 'index.html';
-        })
-        .catch(function(error) {
-            if (error.code !== 'auth/popup-closed-by-user') {
-                alert('GitHub login failed: ' + error.message);
-            }
-        });
+    firebase.auth().signInWithRedirect(provider);
 };
 
-// Global Twitter Sign In
 window.handleTwitterSignIn = function() {
     var provider = new firebase.auth.TwitterAuthProvider();
-    firebase.auth().signInWithPopup(provider)
-        .then(function(result) {
-            window.location.href = 'index.html';
-        })
-        .catch(function(error) {
-            if (error.code !== 'auth/popup-closed-by-user') {
-                alert('Twitter login failed: ' + error.message);
-            }
-        });
+    firebase.auth().signInWithRedirect(provider);
 };
 
-// Global Phone Sign In
 window.handlePhoneSignIn = function() {
     var modal = document.getElementById('otpModal');
     if (modal) modal.style.display = 'flex';
 };
 
-// Toast
+// ============================================
+// STEP 4: Toast notification system
+// ============================================
 function showToast(message, type) {
     var existing = document.querySelector('.login-toast');
     if (existing) existing.remove();
@@ -99,10 +102,13 @@ function showToast(message, type) {
     }, 3000);
 }
 
+// ============================================
+// STEP 5: DOMContentLoaded — Email/Password auth, form toggling, etc.
+// ============================================
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🔐 Auth System initializing...');
+    console.log('🔐 Auth System v6.0 initializing...');
 
-    // Auth state - only redirect if not on login page intentionally
+    // Auth state listener
     var redirecting = false;
     firebase.auth().onAuthStateChanged(function(user) {
         if (user && !redirecting) {
@@ -184,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Form Toggle
+    // Form Toggle (Login <-> Signup)
     var showSignup = document.getElementById('showSignup');
     var showLogin = document.getElementById('showLogin');
     var loginFormEl = document.getElementById('loginForm');
@@ -272,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Toast CSS
+// Toast CSS injection
 var style = document.createElement('style');
-style.textContent = '.login-toast{position:fixed;top:20px;right:20px;padding:12px 24px;background:rgba(18,18,42,0.95);color:white;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.5);z-index:10000;transform:translateY(-20px);opacity:0;transition:all 0.4s ease;border:1px solid rgba(255,255,255,0.1)}.login-toast.show{transform:translateY(0);opacity:1}.login-toast.success{border-left:4px solid #00f5d4}.login-toast.error{border-left:4px solid #ff3cac}.toast-content{display:flex;align-items:center;gap:10px;font-weight:500}';
+style.textContent = '.login-toast{position:fixed;top:20px;right:20px;padding:12px 24px;background:rgba(18,18,42,0.95);color:white;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.5);z-index:10000;transform:translateY(-20px);opacity:0;transition:all 0.4s ease;border:1px solid rgba(255,255,255,0.1)}.login-toast.show{transform:translateY(0);opacity:1}.login-toast.success{border-left:4px solid #00f5d4}.login-toast.error{border-left:4px solid #ff3cac}.login-toast.info{border-left:4px solid #3b82f6}.toast-content{display:flex;align-items:center;gap:10px;font-weight:500}';
 document.head.appendChild(style);

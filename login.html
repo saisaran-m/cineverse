@@ -30,7 +30,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="login.css?v=5.2">
+    <link rel="stylesheet" href="login.css?v=6.0">
     <link rel="icon" type="image/png" href="assets/logo.png">
     <link rel="apple-touch-icon" href="assets/logo.png">
     
@@ -46,9 +46,6 @@
     </script>
 
 </head>
-
-
-
 
 <body>
     <!-- Animated Background -->
@@ -69,7 +66,6 @@
         
         <div class="projector-light"></div>
     </div>
-
 
     <!-- Floating Movie Posters Background -->
     <div class="floating-posters" id="floatingPosters"></div>
@@ -129,20 +125,19 @@
                 </div>
 
                 <div class="social-login">
-                    <button class="social-btn google" id="googleLoginBtn" title="Login with Google" onclick="handleGoogleSignIn()">
+                    <button type="button" class="social-btn google" id="googleLoginBtn" title="Login with Google" onclick="handleGoogleSignIn()">
                         <i class="fab fa-google"></i>
                     </button>
-                    <button class="social-btn phone" id="phoneLoginBtn" title="Login with Phone" onclick="handlePhoneSignIn()">
+                    <button type="button" class="social-btn phone" id="phoneLoginBtn" title="Login with Phone" onclick="handlePhoneSignIn()">
                         <i class="fas fa-phone"></i>
                     </button>
-                    <button class="social-btn github" id="githubLoginBtn" onclick="handleGithubSignIn()">
+                    <button type="button" class="social-btn github" id="githubLoginBtn" title="Login with GitHub" onclick="handleGithubSignIn()">
                         <i class="fab fa-github"></i>
                     </button>
-                    <button class="social-btn twitter" id="twitterLoginBtn" onclick="handleTwitterSignIn()">
+                    <button type="button" class="social-btn twitter" id="twitterLoginBtn" title="Login with Twitter" onclick="handleTwitterSignIn()">
                         <i class="fab fa-twitter"></i>
                     </button>
                 </div>
-
 
                 <p class="auth-switch">
                     Don't have an account? <a href="#" id="showSignup">Create one</a>
@@ -214,20 +209,19 @@
                 </div>
 
                 <div class="social-login">
-                    <button class="social-btn google" id="googleSignupBtn" title="Login with Google" onclick="handleGoogleSignIn()">
+                    <button type="button" class="social-btn google" id="googleSignupBtn" title="Sign up with Google" onclick="handleGoogleSignIn()">
                         <i class="fab fa-google"></i>
                     </button>
-                    <button class="social-btn phone" id="phoneSignupBtn" title="Login with Phone" onclick="handlePhoneSignIn()">
+                    <button type="button" class="social-btn phone" id="phoneSignupBtn" title="Sign up with Phone" onclick="handlePhoneSignIn()">
                         <i class="fas fa-phone"></i>
                     </button>
-                    <button class="social-btn github" id="githubSignupBtn" onclick="handleGithubSignIn()">
+                    <button type="button" class="social-btn github" id="githubSignupBtn" title="Sign up with GitHub" onclick="handleGithubSignIn()">
                         <i class="fab fa-github"></i>
                     </button>
-                    <button class="social-btn twitter" id="twitterSignupBtn" onclick="handleTwitterSignIn()">
+                    <button type="button" class="social-btn twitter" id="twitterSignupBtn" title="Sign up with Twitter" onclick="handleTwitterSignIn()">
                         <i class="fab fa-twitter"></i>
                     </button>
                 </div>
-
 
                 <p class="auth-switch">
                     Already have an account? <a href="#" id="showLogin">Sign in</a>
@@ -241,7 +235,7 @@
         </p>
     </div>
 
-    <!-- OTP Modal (Surgical Addition) -->
+    <!-- OTP Modal -->
     <div id="otpModal" class="player-modal" style="display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.9);">
         <div class="auth-card" style="max-width: 400px; padding: 40px; text-align: center;">
             <h2 class="auth-title">Verify Phone</h2>
@@ -272,22 +266,14 @@
         </div>
     </div>
 
-    <!-- Firebase SDK -->
+    <!-- Firebase SDK (loaded before custom scripts) -->
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     
-    <script src="firebase.js?v=5.3"></script>
-    <script src="login.js?v=5.3"></script>
-
-</body>
-</html>
-
-
-
-
-
+    <script src="firebase.js?v=6.0"></script>
+    <script src="login.js?v=6.0"></script>
 
 </body>
 </html>
