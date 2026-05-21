@@ -25,9 +25,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ------------------------------------------
     // GOOGLE SIGN IN — using addEventListener (not onclick)
-    // Uses signInWithRedirect ONLY — most reliable
+    // Uses signInWithPopup first (most reliable for third-party cookie restrictions)
+    // and falls back to signInWithRedirect if blocked.
     // ------------------------------------------
     var googleBtns = document.querySelectorAll('#googleLoginBtn, #googleSignupBtn');
+    
+    function resetGoogleButtons() {
+        googleBtns.forEach(function(btn) {
+            btn.innerHTML = '<i class="fab fa-google"></i>';
+            btn.style.opacity = '1';
+        });
+    }
+
     googleBtns.forEach(function(btn) {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
@@ -43,14 +52,42 @@ document.addEventListener('DOMContentLoaded', function() {
                 provider.addScope('email');
                 provider.addScope('profile');
 
-                // signInWithRedirect — works on ALL browsers
-                // Cannot be blocked by popup blockers or tracking prevention
-                console.log('🔄 Redirecting to Google sign-in...');
-                firebase.auth().signInWithRedirect(provider);
+                console.log('🔄 Attempting Google popup sign-in...');
+                firebase.auth().signInWithPopup(provider)
+                    .then(function(result) {
+                        if (result && result.user) {
+                            console.log('✅ Google login success via popup:', result.user.email);
+                            localStorage.setItem('cineverse_logged_in', 'true');
+                            showToast('Welcome, ' + (result.user.displayName || result.user.email) + '!', 'success');
+                            setTimeout(function() {
+                                window.location.href = 'index.html';
+                            }, 800);
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error('❌ Google popup error:', error.code, error.message);
+                        
+                        // If popup was blocked or failed, fall back to redirect
+                        if (error.code === 'auth/popup-blocked' || 
+                            error.code === 'auth/cancelled-popup-request' ||
+                            error.code === 'auth/internal-error') {
+                            console.log('🔄 Popup blocked or failed — trying redirect fallback...');
+                            showToast('Popup blocked. Redirecting to Google...', 'info');
+                            firebase.auth().signInWithRedirect(provider);
+                            return;
+                        }
+                        
+                        resetGoogleButtons();
+                        
+                        if (error.code === 'auth/popup-closed-by-user') {
+                            showToast('Login cancelled', 'info');
+                        } else {
+                            showToast('Login failed: ' + error.message, 'error');
+                        }
+                    });
             } catch(err) {
-                console.error('❌ Error:', err);
-                btn.innerHTML = '<i class="fab fa-google"></i>';
-                btn.style.opacity = '1';
+                console.error('❌ Error during setup:', err);
+                resetGoogleButtons();
                 showToast('Error: ' + err.message, 'error');
             }
         });
