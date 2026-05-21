@@ -382,6 +382,11 @@ function endWatchParty() {
     if (window.watchChatUnsubscribe) window.watchChatUnsubscribe();
     const overlay = document.getElementById('watchPartyOverlay');
     if (overlay) overlay.classList.remove('active');
+    
+    // Unload iframe source to stop background audio leaks in Watch Party
+    const iframe = document.getElementById('wpPlayerIframe');
+    if (iframe) iframe.src = '';
+    
     if (currentWatchSession) db.collection('watch_sessions').doc(currentWatchSession.id).delete();
     currentWatchSession = null;
 }

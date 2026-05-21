@@ -809,30 +809,34 @@ function loadMovieStream(movieId, serverIndex) {
 // === UI Handlers ===
 function closePlayer() {
     const modal = $('#playerModal');
-    const iframe = $('#movieIframe');
-    if (modal) modal.style.display = 'none';
+    const iframe = $('#moviePlayer');
+    if (modal) {
+        modal.style.display = 'none';
+        modal.classList.remove('active');
+    }
     if (iframe) iframe.src = '';
+    
+    // Reset loading state
+    const loading = $('#playerLoading');
+    if (loading) {
+        loading.innerHTML = '<div class="spinner"></div><p>Loading movie...</p>';
+        loading.classList.add('hidden');
+        loading.style.pointerEvents = 'none';
+    }
+    
     document.body.style.overflow = 'auto';
+    currentMovieId = null;
     console.log('🎬 Player closed and stream stopped');
 }
 
 function closeDetail() {
     const modal = $('#detailModal');
-    if (modal) modal.style.display = 'none';
+    if (modal) {
+        modal.style.display = 'none';
+        modal.classList.remove('active');
+    }
     document.body.style.overflow = 'auto';
     console.log('🎬 Detail modal closed');
-}
-
-function closePlayerOriginal() {
-    const iframe = $('#moviePlayer');
-    iframe.src = '';
-    // Reset loading state
-    const loading = $('#playerLoading');
-    loading.innerHTML = '<div class="spinner"></div><p>Loading movie...</p>';
-
-    $('#playerModal').classList.remove('active');
-    document.body.style.overflow = '';
-    currentMovieId = null;
 }
 
 // === Toast ===
