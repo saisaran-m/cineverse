@@ -1,118 +1,7 @@
-console.log('🚀 [CineVerse] login.js v6.0 Loaded');
+console.log('🚀 [CineVerse] login.js v7.0 Loaded');
 
 // ============================================
-// STEP 1: Handle redirect result FIRST
-// When user comes back from Google sign-in redirect,
-// this catches the result and sends them to index.html
-// ============================================
-(function() {
-    if (typeof firebase === 'undefined' || !firebase.auth) {
-        console.error('❌ Firebase not loaded yet!');
-        return;
-    }
-
-    firebase.auth().getRedirectResult()
-        .then(function(result) {
-            if (result && result.user) {
-                console.log('✅ Redirect login success:', result.user.email);
-                showToast('Welcome, ' + (result.user.displayName || result.user.email) + '!', 'success');
-                setTimeout(function() {
-                    window.location.href = 'index.html';
-                }, 500);
-            }
-        })
-        .catch(function(error) {
-            console.error('❌ Redirect result error:', error.code, error.message);
-            if (error.code === 'auth/account-exists-with-different-credential') {
-                showToast('An account already exists with this email using a different provider.', 'error');
-            }
-        });
-})();
-
-// ============================================
-// STEP 2: Google Sign In — REDIRECT method (most reliable)
-// ============================================
-window.handleGoogleSignIn = function() {
-    console.log('🚀 Google button clicked!');
-
-    // Immediate visual feedback
-    var allGoogleBtns = document.querySelectorAll('.social-btn.google');
-    allGoogleBtns.forEach(function(btn) {
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-        btn.style.opacity = '0.7';
-        btn.style.pointerEvents = 'none';
-    });
-
-    function resetButtons() {
-        allGoogleBtns.forEach(function(btn) {
-            btn.innerHTML = '<i class="fab fa-google"></i>';
-            btn.style.opacity = '1';
-            btn.style.pointerEvents = 'auto';
-        });
-    }
-
-    try {
-        var provider = new firebase.auth.GoogleAuthProvider();
-        provider.addScope('email');
-        provider.addScope('profile');
-
-        // Try popup first (works on desktop, some mobile)
-        console.log('🔄 Attempting Google popup sign-in...');
-        firebase.auth().signInWithPopup(provider)
-            .then(function(result) {
-                console.log('✅ Google login success:', result.user.email);
-                showToast('Welcome, ' + (result.user.displayName || result.user.email) + '!', 'success');
-                setTimeout(function() { window.location.href = 'index.html'; }, 800);
-            })
-            .catch(function(error) {
-                console.error('❌ Google popup error:', error.code, error.message);
-                
-                // If popup was blocked, fall back to redirect
-                if (error.code === 'auth/popup-blocked' || 
-                    error.code === 'auth/cancelled-popup-request' ||
-                    error.code === 'auth/internal-error') {
-                    console.log('🔄 Popup blocked — using redirect instead...');
-                    showToast('Redirecting to Google...', 'info');
-                    firebase.auth().signInWithRedirect(provider);
-                    return;
-                }
-                
-                resetButtons();
-                
-                if (error.code === 'auth/popup-closed-by-user') {
-                    showToast('Login cancelled', 'info');
-                } else {
-                    showToast('Login failed: ' + error.message, 'error');
-                }
-            });
-
-    } catch(e) {
-        console.error('❌ Google sign-in error:', e);
-        resetButtons();
-        showToast('Error: ' + e.message, 'error');
-    }
-};
-
-// ============================================
-// STEP 3: Other social sign-ins
-// ============================================
-window.handleGithubSignIn = function() {
-    var provider = new firebase.auth.GithubAuthProvider();
-    firebase.auth().signInWithRedirect(provider);
-};
-
-window.handleTwitterSignIn = function() {
-    var provider = new firebase.auth.TwitterAuthProvider();
-    firebase.auth().signInWithRedirect(provider);
-};
-
-window.handlePhoneSignIn = function() {
-    var modal = document.getElementById('otpModal');
-    if (modal) modal.style.display = 'flex';
-};
-
-// ============================================
-// STEP 4: Toast notification system
+// TOAST NOTIFICATION
 // ============================================
 function showToast(message, type) {
     var existing = document.querySelector('.login-toast');
@@ -129,21 +18,94 @@ function showToast(message, type) {
 }
 
 // ============================================
-// STEP 5: DOMContentLoaded — Email/Password auth, form toggling, etc.
+// WAIT FOR EVERYTHING TO LOAD, THEN ATTACH HANDLERS
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🔐 Auth System v6.0 initializing...');
+    console.log('🔐 Auth System v7.0 initializing...');
 
-    // Auth state listener
-    var redirecting = false;
+    // ------------------------------------------
+    // GOOGLE SIGN IN — using addEventListener (not onclick)
+    // Uses signInWithRedirect ONLY — most reliable
+    // ------------------------------------------
+    var googleBtns = document.querySelectorAll('#googleLoginBtn, #googleSignupBtn');
+    googleBtns.forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('🚀 Google button clicked!');
+
+            // Visual feedback
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            btn.style.opacity = '0.6';
+
+            try {
+                var provider = new firebase.auth.GoogleAuthProvider();
+                provider.addScope('email');
+                provider.addScope('profile');
+
+                // signInWithRedirect — works on ALL browsers
+                // Cannot be blocked by popup blockers or tracking prevention
+                console.log('🔄 Redirecting to Google sign-in...');
+                firebase.auth().signInWithRedirect(provider);
+            } catch(err) {
+                console.error('❌ Error:', err);
+                btn.innerHTML = '<i class="fab fa-google"></i>';
+                btn.style.opacity = '1';
+                showToast('Error: ' + err.message, 'error');
+            }
+        });
+    });
+    console.log('✅ Google buttons attached:', googleBtns.length);
+
+    // ------------------------------------------
+    // PHONE, GITHUB, TWITTER — "Coming Soon"
+    // ------------------------------------------
+    var comingSoonBtns = document.querySelectorAll('#phoneLoginBtn, #phoneSignupBtn, #githubLoginBtn, #githubSignupBtn, #twitterLoginBtn, #twitterSignupBtn');
+    comingSoonBtns.forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            showToast('🎬 Coming Soon! This login method will be available shortly.', 'info');
+        });
+    });
+    console.log('✅ Coming Soon buttons attached:', comingSoonBtns.length);
+
+    // ------------------------------------------
+    // REDIRECT RESULT HANDLER
+    // When user comes back from Google, catch the result
+    // ------------------------------------------
+    firebase.auth().getRedirectResult()
+        .then(function(result) {
+            if (result && result.user) {
+                console.log('✅ Google login success:', result.user.email);
+                showToast('Welcome, ' + (result.user.displayName || result.user.email) + '!', 'success');
+                setTimeout(function() {
+                    window.location.href = 'index.html';
+                }, 800);
+            }
+        })
+        .catch(function(error) {
+            console.error('❌ Redirect error:', error.code, error.message);
+            if (error.code === 'auth/account-exists-with-different-credential') {
+                showToast('This email is already linked to another sign-in method.', 'error');
+            } else if (error.message) {
+                showToast('Login failed: ' + error.message, 'error');
+            }
+        });
+
+    // ------------------------------------------
+    // AUTH STATE — auto-redirect if already logged in
+    // ------------------------------------------
     firebase.auth().onAuthStateChanged(function(user) {
-        if (user && !redirecting) {
+        if (user) {
             console.log('👤 Already logged in:', user.email);
             window.location.href = 'index.html';
         }
     });
 
-    // Email Login
+    // ------------------------------------------
+    // EMAIL LOGIN
+    // ------------------------------------------
     var loginForm = document.getElementById('loginFormElement');
     if (loginForm) {
         loginForm.addEventListener('submit', function(e) {
@@ -156,7 +118,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             btn.disabled = true;
             btn.querySelector('.btn-text').textContent = 'Signing in...';
-            redirecting = true;
 
             firebase.auth().signInWithEmailAndPassword(email, password)
                 .then(function() {
@@ -164,7 +125,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     setTimeout(function() { window.location.href = 'index.html'; }, 1000);
                 })
                 .catch(function(error) {
-                    redirecting = false;
                     btn.disabled = false;
                     btn.querySelector('.btn-text').textContent = 'Sign In';
                     var msg = 'Login failed';
@@ -177,7 +137,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Email Signup
+    // ------------------------------------------
+    // EMAIL SIGNUP
+    // ------------------------------------------
     var signupForm = document.getElementById('signupFormElement');
     if (signupForm) {
         signupForm.addEventListener('submit', function(e) {
@@ -195,7 +157,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (terms && !terms.checked) { showToast('Accept terms first', 'error'); return; }
 
             btn.disabled = true;
-            redirecting = true;
 
             firebase.auth().createUserWithEmailAndPassword(email, password)
                 .then(function(result) {
@@ -206,7 +167,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     setTimeout(function() { window.location.href = 'index.html'; }, 1000);
                 })
                 .catch(function(error) {
-                    redirecting = false;
                     btn.disabled = false;
                     var msg = 'Signup failed';
                     if (error.code === 'auth/email-already-in-use') msg = 'Email already in use';
@@ -216,7 +176,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Form Toggle (Login <-> Signup)
+    // ------------------------------------------
+    // FORM TOGGLE (Login <-> Signup)
+    // ------------------------------------------
     var showSignup = document.getElementById('showSignup');
     var showLogin = document.getElementById('showLogin');
     var loginFormEl = document.getElementById('loginForm');
@@ -233,7 +195,9 @@ document.addEventListener('DOMContentLoaded', function() {
         loginFormEl.classList.add('active');
     });
 
-    // Password Toggle
+    // ------------------------------------------
+    // PASSWORD TOGGLE
+    // ------------------------------------------
     var toggleLogin = document.getElementById('toggleLoginPassword');
     var toggleSignup = document.getElementById('toggleSignupPassword');
     if (toggleLogin) toggleLogin.addEventListener('click', function() {
@@ -251,7 +215,9 @@ document.addEventListener('DOMContentLoaded', function() {
         icon.classList.toggle('fa-eye-slash');
     });
 
-    // Forgot Password
+    // ------------------------------------------
+    // FORGOT PASSWORD
+    // ------------------------------------------
     var forgotLink = document.getElementById('forgotPasswordLink');
     if (forgotLink) forgotLink.addEventListener('click', function(e) {
         e.preventDefault();
@@ -262,49 +228,18 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(function(err) { showToast(err.message, 'error'); });
     });
 
-    // OTP Modal Close
+    // ------------------------------------------
+    // OTP MODAL (for future phone auth)
+    // ------------------------------------------
     var closeOtp = document.getElementById('closeOtpModal');
     var otpModal = document.getElementById('otpModal');
     if (closeOtp) closeOtp.addEventListener('click', function(e) {
         e.preventDefault();
         if (otpModal) otpModal.style.display = 'none';
     });
-
-    // Phone Auth
-    var sendOtpBtn = document.getElementById('sendOtpBtn');
-    var verifyOtpBtn = document.getElementById('verifyOtpBtn');
-
-    if (sendOtpBtn) sendOtpBtn.addEventListener('click', function() {
-        var phone = document.getElementById('phoneNumber').value.trim();
-        if (!phone || phone === '+') { showToast('Enter valid phone number', 'error'); return; }
-        if (!window.recaptchaVerifier) {
-            window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', { size: 'invisible' });
-        }
-        firebase.auth().signInWithPhoneNumber(phone, window.recaptchaVerifier)
-            .then(function(result) {
-                window.confirmationResult = result;
-                document.getElementById('phoneInputGroup').style.display = 'none';
-                document.getElementById('otpInputGroup').style.display = 'block';
-                sendOtpBtn.style.display = 'none';
-                if (verifyOtpBtn) verifyOtpBtn.style.display = 'block';
-                showToast('Code sent!', 'success');
-            })
-            .catch(function(err) { showToast(err.message, 'error'); });
-    });
-
-    if (verifyOtpBtn) verifyOtpBtn.addEventListener('click', function() {
-        var code = document.getElementById('otpCode').value.trim();
-        if (!code || !window.confirmationResult) { showToast('Enter the code', 'error'); return; }
-        window.confirmationResult.confirm(code)
-            .then(function() {
-                showToast('Phone verified!', 'success');
-                setTimeout(function() { window.location.href = 'index.html'; }, 1000);
-            })
-            .catch(function() { showToast('Invalid code', 'error'); });
-    });
 });
 
 // Toast CSS injection
-var style = document.createElement('style');
-style.textContent = '.login-toast{position:fixed;top:20px;right:20px;padding:12px 24px;background:rgba(18,18,42,0.95);color:white;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.5);z-index:10000;transform:translateY(-20px);opacity:0;transition:all 0.4s ease;border:1px solid rgba(255,255,255,0.1)}.login-toast.show{transform:translateY(0);opacity:1}.login-toast.success{border-left:4px solid #00f5d4}.login-toast.error{border-left:4px solid #ff3cac}.login-toast.info{border-left:4px solid #3b82f6}.toast-content{display:flex;align-items:center;gap:10px;font-weight:500}';
-document.head.appendChild(style);
+var toastStyle = document.createElement('style');
+toastStyle.textContent = '.login-toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-20px);padding:14px 28px;background:rgba(18,18,42,0.97);color:white;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,0.6);z-index:10000;opacity:0;transition:all 0.4s ease;border:1px solid rgba(255,255,255,0.1);max-width:90%;text-align:center;font-size:0.95rem}.login-toast.show{transform:translateX(-50%) translateY(0);opacity:1}.login-toast.success{border-bottom:3px solid #00f5d4}.login-toast.error{border-bottom:3px solid #ff3cac}.login-toast.info{border-bottom:3px solid #3b82f6}.toast-content{display:flex;align-items:center;gap:10px;font-weight:500}';
+document.head.appendChild(toastStyle);
