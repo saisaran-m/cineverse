@@ -111,62 +111,64 @@ function generateBackdropSvg(title, color1, color2) {
 
 // === Sample Data with gradient colors for posters ===
 const SAMPLE_MOVIES_RAW = [
-    { id: 912649, title: "Venom: The Last Dance", overview: "Eddie and Venom are on the run. Hunted by both of their worlds and with the net closing in, the duo are forced into a devastating decision that will bring the curtains down on Venom and Eddie's last dance.", vote_average: 6.4, release_date: "2024-10-22", original_language: "en", genre_ids: [878, 28, 12], popularity: 5800, vote_count: 2100, original_title: "Venom: The Last Dance", colors: ['#1a1a2e', '#e94560'] },
-    { id: 1184918, title: "The Wild Robot", overview: "After a shipwreck, an intelligent robot called Roz is stranded on an uninhabited island. To survive the harsh environment, Roz bonds with the island's animals and cares for an orphaned baby goose.", vote_average: 8.5, release_date: "2024-09-12", original_language: "en", genre_ids: [16, 878, 10751], popularity: 4200, vote_count: 3500, original_title: "The Wild Robot", colors: ['#a8ff78', '#78ffd6'] },
-    { id: 533535, title: "Deadpool & Wolverine", overview: "A listless Wade Wilson toils away in civilian life with his days as the morally flexible mercenary, Deadpool, behind him. But when his homeworld faces an existential threat, Wade must reluctantly suit up again.", vote_average: 7.7, release_date: "2024-07-24", original_language: "en", genre_ids: [28, 35, 878], popularity: 5500, vote_count: 5200, original_title: "Deadpool & Wolverine", colors: ['#e74c3c', '#c0392b'] },
-    { id: 698687, title: "Transformers One", overview: "The untold origin story of Optimus Prime and Megatron, better known as sworn enemies, but once were friends bonded like brothers who changed the fate of Cybertron forever.", vote_average: 8.1, release_date: "2024-09-11", original_language: "en", genre_ids: [16, 878, 28, 12], popularity: 3100, vote_count: 1200, original_title: "Transformers One", colors: ['#2b86c5', '#00f5d4'] },
-    { id: 1100782, title: "Smile 2", overview: "About to embark on a new world tour, global pop sensation Skye Riley begins experiencing increasingly terrifying and inexplicable events.", vote_average: 6.8, release_date: "2024-10-16", original_language: "en", genre_ids: [27, 53], popularity: 2900, vote_count: 900, original_title: "Smile 2", colors: ['#f72585', '#b5179e'] },
-    { id: 945961, title: "Alien: Romulus", overview: "While scavenging the deep ends of a derelict space station, a group of young space colonizers come face to face with the most terrifying life form in the universe.", vote_average: 7.2, release_date: "2024-08-13", original_language: "en", genre_ids: [27, 878], popularity: 3500, vote_count: 2800, original_title: "Alien: Romulus", colors: ['#141e30', '#243b55'] },
-    { id: 823464, title: "Godzilla x Kong", overview: "Following their fight against Mechagodzilla, Godzilla and Kong are faced with a colossal undiscovered threat hidden within our world, challenging their very existence.", vote_average: 7.1, release_date: "2024-03-27", original_language: "en", genre_ids: [28, 878, 12], popularity: 4800, vote_count: 4100, original_title: "Godzilla x Kong: The New Empire", colors: ['#ff6b35', '#f72585'] },
-    { id: 786892, title: "Furiosa: A Mad Max Saga", overview: "As the world fell, young Furiosa is snatched from the Green Place of Many Mothers and falls into the hands of a great Biker Horde led by the Warlord Dementus.", vote_average: 7.6, release_date: "2024-05-22", original_language: "en", genre_ids: [28, 12, 878], popularity: 2600, vote_count: 3200, original_title: "Furiosa: A Mad Max Saga", colors: ['#c79081', '#734b20'] },
-    { id: 573435, title: "Bad Boys: Ride or Die", overview: "After their late captain is accused of being dirty, detectives Mike Lowrey and Marcus Burnett set out to investigate and clear his name.", vote_average: 7.2, release_date: "2024-06-05", original_language: "en", genre_ids: [28, 35, 80], popularity: 3200, vote_count: 2100, original_title: "Bad Boys: Ride or Die", colors: ['#0f0c29', '#302b63'] },
-    { id: 1011985, title: "Kung Fu Panda 4", overview: "Po is gearing up to become the spiritual leader of his Valley of Peace, but also needs someone to take his place as Dragon Warrior.", vote_average: 7.1, release_date: "2024-03-02", original_language: "en", genre_ids: [16, 28, 35, 10751], popularity: 2800, vote_count: 2900, original_title: "Kung Fu Panda 4", colors: ['#ffd700', '#ff6b35'] },
-    { id: 693134, title: "Dune: Part Two", overview: "Follow the mythic journey of Paul Atreides as he unites with Chani and the Fremen while on a warpath of revenge against the conspirators who destroyed his family.", vote_average: 8.2, release_date: "2024-02-27", original_language: "en", genre_ids: [878, 12], popularity: 5100, vote_count: 5800, original_title: "Dune: Part Two", colors: ['#c79081', '#dfa579'] },
-    { id: 1022789, title: "Inside Out 2", overview: "Teenager Riley's mind headquarters is undergoing a sudden demolition to make room for new emotions: Anxiety, Envy, Ennui and Embarrassment.", vote_average: 7.6, release_date: "2024-06-11", original_language: "en", genre_ids: [16, 10751, 12, 35], popularity: 6200, vote_count: 4500, original_title: "Inside Out 2", colors: ['#8b5cf6', '#a855f7'] },
-    { id: 929590, title: "Civil War", overview: "In the near future, a group of war journalists attempt to survive while reporting the truth as the United States stands on the brink of civil war.", vote_average: 7.0, release_date: "2024-04-10", original_language: "en", genre_ids: [28, 18, 53], popularity: 2400, vote_count: 1600, original_title: "Civil War", colors: ['#3e5151', '#decba4'] },
-    { id: 653346, title: "Kingdom of the Planet of the Apes", overview: "Several generations in the future following Caesar's reign, apes are now the dominant species and live harmoniously while humans have been reduced to living in the shadows.", vote_average: 7.1, release_date: "2024-05-08", original_language: "en", genre_ids: [878, 12, 28], popularity: 3600, vote_count: 2700, original_title: "Kingdom of the Planet of the Apes", colors: ['#2193b0', '#6dd5ed'] },
-    { id: 519182, title: "Despicable Me 4", overview: "Gru and Lucy welcome a new member to the family, Gru Jr. However, their peaceful existence is soon threatened when criminal mastermind Maxime Le Mal emerges.", vote_average: 7.0, release_date: "2024-06-20", original_language: "en", genre_ids: [16, 35, 10751, 28], popularity: 4100, vote_count: 2300, original_title: "Despicable Me 4", colors: ['#ffd700', '#ff3cac'] },
-    { id: 838209, title: "Moana 2", overview: "After receiving an unexpected call from her wayfinding ancestors, Moana journeys alongside Maui and a new crew to the far seas of Oceania.", vote_average: 7.0, release_date: "2024-11-21", original_language: "en", genre_ids: [16, 12, 10751, 35], popularity: 5400, vote_count: 1800, original_title: "Moana 2", colors: ['#00f5d4', '#2b86c5'] },
-    { id: 614933, title: "Atlas", overview: "A brilliant counterterrorism analyst with a deep distrust of AI discovers it might be her only hope when a mission to capture a renegade robot goes awry.", vote_average: 6.7, release_date: "2024-05-23", original_language: "en", genre_ids: [878, 28], popularity: 2000, vote_count: 1400, original_title: "Atlas", colors: ['#434343', '#000000'] },
-    { id: 748783, title: "The Garfield Movie", overview: "Garfield, the world-famous Monday-hating, lasagna-loving indoor cat, is about to have a wild outdoor adventure!", vote_average: 7.1, release_date: "2024-04-30", original_language: "en", genre_ids: [16, 35, 10751, 12], popularity: 2500, vote_count: 1100, original_title: "The Garfield Movie", colors: ['#ff6b35', '#ffd700'] },
-    { id: 940551, title: "Migration", overview: "After a family of ducks decides to leave their New England pond for an adventurous trip to Jamaica, their well-laid plans quickly go awry.", vote_average: 7.4, release_date: "2023-12-06", original_language: "en", genre_ids: [16, 35, 10751, 12], popularity: 2100, vote_count: 1800, original_title: "Migration", colors: ['#f7971e', '#ffd200'] },
-    { id: 1064028, title: "Abigail", overview: "A group of criminals kidnap the twelve-year-old ballerina daughter of a powerful underworld figure, only to discover the girl is not what she seems.", vote_average: 6.8, release_date: "2024-04-18", original_language: "en", genre_ids: [27, 53, 28], popularity: 1800, vote_count: 900, original_title: "Abigail", colors: ['#e94560', '#1a1a2e'] },
+    { id: 912649, title: "Venom: The Last Dance", overview: "Eddie and Venom are on the run. Hunted by both of their worlds and with the net closing in, the duo are forced into a devastating decision that will bring the curtains down on Venom and Eddie's last dance.", vote_average: 6.4, release_date: "2024-10-22", original_language: "en", genre_ids: [878, 28, 12], popularity: 5800, vote_count: 2100, original_title: "Venom: The Last Dance", colors: ['#1a1a2e', '#e94560'], poster_path: "/kbr1tP2l2rP03xYJqRk2z5K0m6p.jpg", backdrop_path: "/3V4kLQ0mZNs1vY5uSgw779i846B.jpg" },
+    { id: 1184918, title: "The Wild Robot", overview: "After a shipwreck, an intelligent robot called Roz is stranded on an uninhabited island. To survive the harsh environment, Roz bonds with the island's animals and cares for an orphaned baby goose.", vote_average: 8.5, release_date: "2024-09-12", original_language: "en", genre_ids: [16, 878, 10751], popularity: 4200, vote_count: 3500, original_title: "The Wild Robot", colors: ['#a8ff78', '#78ffd6'], poster_path: "/9w0Vh9eizfBXrcomiaFWTIPdboo.jpg", backdrop_path: "/18TSJF4W5lEvF2uPvQoHl4W3Trt.jpg" },
+    { id: 533535, title: "Deadpool & Wolverine", overview: "A listless Wade Wilson toils away in civilian life with his days as the morally flexible mercenary, Deadpool, behind him. But when his homeworld faces an existential threat, Wade must reluctantly suit up again.", vote_average: 7.7, release_date: "2024-07-24", original_language: "en", genre_ids: [28, 35, 878], popularity: 5500, vote_count: 5200, original_title: "Deadpool & Wolverine", colors: ['#e74c3c', '#c0392b'], poster_path: "/8cdVerVmILRA7eVvJ3n01dC9Jy7.jpg", backdrop_path: "/yD1w5J2j9u8591g61y975w85G7P.jpg" },
+    { id: 698687, title: "Transformers One", overview: "The untold origin story of Optimus Prime and Megatron, better known as sworn enemies, but once were friends bonded like brothers who changed the fate of Cybertron forever.", vote_average: 8.1, release_date: "2024-09-11", original_language: "en", genre_ids: [16, 878, 28, 12], popularity: 3100, vote_count: 1200, original_title: "Transformers One", colors: ['#2b86c5', '#00f5d4'], poster_path: "/qr9u1nI3F724aQ0q65851dF39G7.jpg", backdrop_path: "/7h6ruz05Ma5pIBuC0v5J5zXNs6p.jpg" },
+    { id: 1100782, title: "Smile 2", overview: "About to embark on a new world tour, global pop sensation Skye Riley begins experiencing increasingly terrifying and inexplicable events.", vote_average: 6.8, release_date: "2024-10-16", original_language: "en", genre_ids: [27, 53], popularity: 2900, vote_count: 900, original_title: "Smile 2", colors: ['#f72585', '#b5179e'], poster_path: "/ht8Uv9QPv9y7K0RvUyJIaXOZTfd.jpg", backdrop_path: "/i3ih8Z66RzsCcq3B7mdf72xU8Ki.jpg" },
+    { id: 945961, title: "Alien: Romulus", overview: "While scavenging the deep ends of a derelict space station, a group of young space colonizers come face to face with the most terrifying life form in the universe.", vote_average: 7.2, release_date: "2024-08-13", original_language: "en", genre_ids: [27, 878], popularity: 3500, vote_count: 2800, original_title: "Alien: Romulus", colors: ['#141e30', '#243b55'], poster_path: "/b3mdmjztRAeqY0l3S2K7x3xW0rL.jpg", backdrop_path: "/9SSEUrq23Z1Z1ZVMptDJw61GRGB.jpg" },
+    { id: 823464, title: "Godzilla x Kong", overview: "Following their fight against Mechagodzilla, Godzilla and Kong are faced with a colossal undiscovered threat hidden within our world, challenging their very existence.", vote_average: 7.1, release_date: "2024-03-27", original_language: "en", genre_ids: [28, 878, 12], popularity: 4800, vote_count: 4100, original_title: "Godzilla x Kong: The New Empire", colors: ['#ff6b35', '#f72585'], poster_path: "/1DTP1Ph4uzNO6ofRUm7eAimWoKD.jpg", backdrop_path: "/xOMo8BRK7PzsJ24Z76J36DYJD44.jpg" },
+    { id: 786892, title: "Furiosa: A Mad Max Saga", overview: "As the world fell, young Furiosa is snatched from the Green Place of Many Mothers and falls into the hands of a great Biker Horde led by the Warlord Dementus.", vote_average: 7.6, release_date: "2024-05-22", original_language: "en", genre_ids: [28, 12, 878], popularity: 2600, vote_count: 3200, original_title: "Furiosa: A Mad Max Saga", colors: ['#c79081', '#734b20'], poster_path: "/iADOJ8Zymht2JPMoy3R7xceZprc.jpg", backdrop_path: "/wNAhu2jFwbrz0vN4vC25H9jnv5G.jpg" },
+    { id: 573435, title: "Bad Boys: Ride or Die", overview: "After their late captain is accused of being dirty, detectives Mike Lowrey and Marcus Burnett set out to investigate and clear his name.", vote_average: 7.2, release_date: "2024-06-05", original_language: "en", genre_ids: [28, 35, 80], popularity: 3200, vote_count: 2100, original_title: "Bad Boys: Ride or Die", colors: ['#0f0c29', '#302b63'], poster_path: "/oGythE98MYleE6mZlGs5oBGkux1.jpg", backdrop_path: "/ga461eg45C686eUM2iLVVAZs88y.jpg" },
+    { id: 1011985, title: "Kung Fu Panda 4", overview: "Po is gearing up to become the spiritual leader of his Valley of Peace, but also needs someone to take his place as Dragon Warrior.", vote_average: 7.1, release_date: "2024-03-02", original_language: "en", genre_ids: [16, 28, 35, 10751], popularity: 2800, vote_count: 2900, original_title: "Kung Fu Panda 4", colors: ['#ffd700', '#ff6b35'], poster_path: "/kDp1vUBupM0kS53gW3y60C4gR6t.jpg", backdrop_path: "/ch3n21212.jpg" },
+    { id: 693134, title: "Dune: Part Two", overview: "Follow the mythic journey of Paul Atreides as he unites with Chani and the Fremen while on a warpath of revenge against the conspirators who destroyed his family.", vote_average: 8.2, release_date: "2024-02-27", original_language: "en", genre_ids: [878, 12], popularity: 5100, vote_count: 5800, original_title: "Dune: Part Two", colors: ['#c79081', '#dfa579'], poster_path: "/6izwz7rsy95ARzTR3poZ8H6c5pp.jpg", backdrop_path: "/xBgymGo20qwhmGU0f5Xvgux26fr.jpg" },
+    { id: 1022789, title: "Inside Out 2", overview: "Teenager Riley's mind headquarters is undergoing a sudden demolition to make room for new emotions: Anxiety, Envy, Ennui and Embarrassment.", vote_average: 7.6, release_date: "2024-06-11", original_language: "en", genre_ids: [16, 10751, 12, 35], popularity: 6200, vote_count: 4500, original_title: "Inside Out 2", colors: ['#8b5cf6', '#a855f7'], poster_path: "/vpnVM9B6NMmQpWeZvzLvDESb2QY.jpg", backdrop_path: "/stKG2Fk8oWZ37earZ2v2okihzN0.jpg" },
+    { id: 929590, title: "Civil War", overview: "In the near future, a group of war journalists attempt to survive while reporting the truth as the United States stands on the brink of civil war.", vote_average: 7.0, release_date: "2024-04-10", original_language: "en", genre_ids: [28, 18, 53], popularity: 2400, vote_count: 1600, original_title: "Civil War", colors: ['#3e5151', '#decba4'], poster_path: "/sh7Rg8Er3tFcN9BpKIPOMvALgZd.jpg", backdrop_path: "/s52g8121.jpg" },
+    { id: 653346, title: "Kingdom of the Planet of the Apes", overview: "Several generations in the future following Caesar's reign, apes are now the dominant species and live harmoniously while humans have been reduced to living in the shadows.", vote_average: 7.1, release_date: "2024-05-08", original_language: "en", genre_ids: [878, 12, 28], popularity: 3600, vote_count: 2700, original_title: "Kingdom of the Planet of the Apes", colors: ['#2193b0', '#6dd5ed'], poster_path: "/gKkl3gNTUj2t2KP0JQAUn3Qj27g.jpg", backdrop_path: "/pWs118v.jpg" },
+    { id: 519182, title: "Despicable Me 4", overview: "Gru and Lucy welcome a new member to the family, Gru Jr. However, their peaceful existence is soon threatened when criminal mastermind Maxime Le Mal emerges.", vote_average: 7.0, release_date: "2024-06-20", original_language: "en", genre_ids: [16, 35, 10751, 28], popularity: 4100, vote_count: 2300, original_title: "Despicable Me 4", colors: ['#ffd700', '#ff3cac'], poster_path: "/wWba3TaojhK7NdycRhoQpsG0FaH.jpg", backdrop_path: "/fDm23A6CHnLi9n5794865.jpg" },
+    { id: 838209, title: "Moana 2", overview: "After receiving an unexpected call from her wayfinding ancestors, Moana journeys alongside Maui and a new crew to the far seas of Oceania.", vote_average: 7.0, release_date: "2024-11-21", original_language: "en", genre_ids: [16, 12, 10751, 35], popularity: 5400, vote_count: 1800, original_title: "Moana 2", colors: ['#00f5d4', '#2b86c5'], poster_path: "/4YZpsylmjHbqeWzjKpUEF8gcLNW.jpg", backdrop_path: "/v1251c.jpg" },
+    { id: 614933, title: "Atlas", overview: "A brilliant counterterrorism analyst with a deep distrust of AI discovers it might be her only hope when a mission to capture a renegade robot goes awry.", vote_average: 6.7, release_date: "2024-05-23", original_language: "en", genre_ids: [878, 28], popularity: 2000, vote_count: 1400, original_title: "Atlas", colors: ['#434343', '#000000'], poster_path: "/bcM2Tl5HlRPEcvvjn5Qifz3vX7C.jpg", backdrop_path: "/s852.jpg" },
+    { id: 748783, title: "The Garfield Movie", overview: "Garfield, the world-famous Monday-hating, lasagna-loving indoor cat, is about to have a wild outdoor adventure!", vote_average: 7.1, release_date: "2024-04-30", original_language: "en", genre_ids: [16, 35, 10751, 12], popularity: 2500, vote_count: 1100, original_title: "The Garfield Movie", colors: ['#ff6b35', '#ffd700'], poster_path: "/lWVwWRLqpS1OaNg7KT0ZecSW0PK.jpg", backdrop_path: "/g85.jpg" },
+    { id: 940551, title: "Migration", overview: "After a family of ducks decides to leave their New England pond for an adventurous trip to Jamaica, their well-laid plans quickly go awry.", vote_average: 7.4, release_date: "2023-12-06", original_language: "en", genre_ids: [16, 35, 10751, 12], popularity: 2100, vote_count: 1800, original_title: "Migration", colors: ['#f7971e', '#ffd200'], poster_path: "/ldfCF9RhR40mppkzmftxapaHeTo.jpg", backdrop_path: "/m852.jpg" },
+    { id: 1064028, title: "Abigail", overview: "A group of criminals kidnap the twelve-year-old ballerina daughter of a powerful underworld figure, only to discover the girl is not what she seems.", vote_average: 6.8, release_date: "2024-04-18", original_language: "en", genre_ids: [27, 53, 28], popularity: 1800, vote_count: 900, original_title: "Abigail", colors: ['#e94560', '#1a1a2e'], poster_path: "/reEMJA1uzscCbkpeRJeTT2bjqUp.jpg", backdrop_path: "/a85.jpg" },
 ];
 
 const SAMPLE_HINDI = [
-    { id: 1159311, title: "Stree 2", overview: "The residents of Chanderi face a new supernatural threat as the terrifying entity Sarkata terrorizes the town. Vicky and his friends must rise to protect their community.", vote_average: 7.2, release_date: "2024-08-15", original_language: "hi", genre_ids: [27, 35], popularity: 1800, vote_count: 400, original_title: "Stree 2", colors: ['#1a1a2e', '#e94560'] },
-    { id: 961268, title: "Kalki 2898 AD", overview: "In the year 2898 AD, as the world faces extinction, Ashwatthama must protect an unborn child who holds the key to humanity's salvation.", vote_average: 6.5, release_date: "2024-06-27", original_language: "hi", genre_ids: [878, 28, 14], popularity: 2100, vote_count: 300, original_title: "Kalki 2898 AD", colors: ['#8b5cf6', '#a855f7'] },
-    { id: 1046090, title: "Fighter", overview: "Top-tier Indian Air Force pilots engage in high-octane aerial combat while navigating the complexities of duty, sacrifice, and camaraderie.", vote_average: 6.8, release_date: "2024-01-25", original_language: "hi", genre_ids: [28, 18], popularity: 1500, vote_count: 250, original_title: "Fighter", colors: ['#ff416c', '#ff4b2b'] },
-    { id: 978796, title: "Animal", overview: "A father-son relationship tested by the harsh realities of the outside world as the son transforms into a violent, unpredictable force.", vote_average: 6.8, release_date: "2023-12-01", original_language: "hi", genre_ids: [28, 80, 18, 53], popularity: 1900, vote_count: 350, original_title: "Animal", colors: ['#141e30', '#243b55'] },
-    { id: 1203236, title: "Bhool Bhulaiyaa 3", overview: "A haunted mansion, mysterious occurrences, and a witty protagonist who must unravel supernatural secrets in this spectacular horror-comedy.", vote_average: 6.3, release_date: "2024-11-01", original_language: "hi", genre_ids: [27, 35], popularity: 1200, vote_count: 200, original_title: "Bhool Bhulaiyaa 3", colors: ['#f72585', '#7209b7'] },
-    { id: 1114513, title: "Crew", overview: "Three airline crew members find stolen gold and decide to sell it to pay off their debts. But things take a dangerous turn.", vote_average: 6.5, release_date: "2024-03-29", original_language: "hi", genre_ids: [35, 28], popularity: 800, vote_count: 150, original_title: "Crew", colors: ['#00f5d4', '#2b86c5'] },
-    { id: 1147710, title: "Shaitaan", overview: "A family's weekend trip to the countryside takes a dark turn when a mysterious stranger enters their home and takes control using dark forces.", vote_average: 7.0, release_date: "2024-03-08", original_language: "hi", genre_ids: [27, 53], popularity: 900, vote_count: 180, original_title: "Shaitaan", colors: ['#434343', '#000000'] },
-    { id: 1088004, title: "Teri Baaton Mein Aisa Uljha Jiya", overview: "A robotics engineer falls in love with a sophisticated humanoid robot in this heartfelt romantic comedy about love and technology.", vote_average: 6.0, release_date: "2024-02-09", original_language: "hi", genre_ids: [35, 10749, 878], popularity: 700, vote_count: 120, original_title: "TBMAUJ", colors: ['#ff3cac', '#784ba0'] },
+    { id: 1159311, title: "Stree 2", overview: "The residents of Chanderi face a new supernatural threat as the terrifying entity Sarkata terrorizes the town. Vicky and his friends must rise to protect their community.", vote_average: 7.2, release_date: "2024-08-15", original_language: "hi", genre_ids: [27, 35], popularity: 1800, vote_count: 400, original_title: "Stree 2", colors: ['#1a1a2e', '#e94560'], poster_path: "/reEMJA1uzscCbkpeRJeTT2bjqUp.jpg", backdrop_path: "/reEMJA1uzscCbkpeRJeTT2bjqUp.jpg" },
+    { id: 961268, title: "Kalki 2898 AD", overview: "In the year 2898 AD, as the world faces extinction, Ashwatthama must protect an unborn child who holds the key to humanity's salvation.", vote_average: 6.5, release_date: "2024-06-27", original_language: "hi", genre_ids: [878, 28, 14], popularity: 2100, vote_count: 300, original_title: "Kalki 2898 AD", colors: ['#8b5cf6', '#a855f7'], poster_path: "/1DTP1Ph4uzNO6ofRUm7eAimWoKD.jpg", backdrop_path: "/xOMo8BRK7PzsJ24Z76J36DYJD44.jpg" },
+    { id: 1046090, title: "Fighter", overview: "Top-tier Indian Air Force pilots engage in high-octane aerial combat while navigating the complexities of duty, sacrifice, and camaraderie.", vote_average: 6.8, release_date: "2024-01-25", original_language: "hi", genre_ids: [28, 18], popularity: 1500, vote_count: 250, original_title: "Fighter", colors: ['#ff416c', '#ff4b2b'], poster_path: "/zS4t3nZ9t4q19828468b6l58u0q.jpg", backdrop_path: "/zS4t3nZ9t4q19828468b6l58u0q.jpg" },
+    { id: 978796, title: "Animal", overview: "A father-son relationship tested by the harsh realities of the outside world as the son transforms into a violent, unpredictable force.", vote_average: 6.8, release_date: "2023-12-01", original_language: "hi", genre_ids: [28, 80, 18, 53], popularity: 1900, vote_count: 350, original_title: "Animal", colors: ['#141e30', '#243b55'], poster_path: "/62803t46d655fL85Yn99BqD2l5e.jpg", backdrop_path: "/62803t46d655fL85Yn99BqD2l5e.jpg" },
+    { id: 1203236, title: "Bhool Bhulaiyaa 3", overview: "A haunted mansion, mysterious occurrences, and a witty protagonist who must unravel supernatural secrets in this spectacular horror-comedy.", vote_average: 6.3, release_date: "2024-11-01", original_language: "hi", genre_ids: [27, 35], popularity: 1200, vote_count: 200, original_title: "Bhool Bhulaiyaa 3", colors: ['#f72585', '#7209b7'], poster_path: "/ht8Uv9QPv9y7K0RvUyJIaXOZTfd.jpg", backdrop_path: "/i3ih8Z66RzsCcq3B7mdf72xU8Ki.jpg" },
+    { id: 1114513, title: "Crew", overview: "Three airline crew members find stolen gold and decide to sell it to pay off their debts. But things take a dangerous turn.", vote_average: 6.5, release_date: "2024-03-29", original_language: "hi", genre_ids: [35, 28], popularity: 800, vote_count: 150, original_title: "Crew", colors: ['#00f5d4', '#2b86c5'], poster_path: "/wWba3TaojhK7NdycRhoQpsG0FaH.jpg", backdrop_path: "/wWba3TaojhK7NdycRhoQpsG0FaH.jpg" },
+    { id: 1147710, title: "Shaitaan", overview: "A family's weekend trip to the countryside takes a dark turn when a mysterious stranger enters their home and takes control using dark forces.", vote_average: 7.0, release_date: "2024-03-08", original_language: "hi", genre_ids: [27, 53], popularity: 900, vote_count: 180, original_title: "Shaitaan", colors: ['#434343', '#000000'], poster_path: "/b3mdmjztRAeqY0l3S2K7x3xW0rL.jpg", backdrop_path: "/b3mdmjztRAeqY0l3S2K7x3xW0rL.jpg" },
+    { id: 1088004, title: "Teri Baaton Mein Aisa Uljha Jiya", overview: "A robotics engineer falls in love with a sophisticated humanoid robot in this heartfelt romantic comedy about love and technology.", vote_average: 6.0, release_date: "2024-02-09", original_language: "hi", genre_ids: [35, 10749, 878], popularity: 700, vote_count: 120, original_title: "TBMAUJ", colors: ['#ff3cac', '#784ba0'], poster_path: "/vpnVM9B6NMmQpWeZvzLvDESb2QY.jpg", backdrop_path: "/vpnVM9B6NMmQpWeZvzLvDESb2QY.jpg" },
 ];
 
 const SAMPLE_KOREAN = [
-    { id: 1034541, title: "Exhuma", overview: "A famous feng shui master and a young shaman are hired to exhume a grave. But as they dig deeper, they unearth something far more sinister.", vote_average: 7.4, release_date: "2024-02-22", original_language: "ko", genre_ids: [27, 9648], popularity: 1600, vote_count: 500, original_title: "파묘", colors: ['#0f0c29', '#302b63'] },
-    { id: 496243, title: "Parasite", overview: "Greed and class discrimination threaten the newly formed symbiotic relationship between the wealthy Park family and the destitute Kim clan.", vote_average: 8.5, release_date: "2019-05-30", original_language: "ko", genre_ids: [35, 53, 18], popularity: 3200, vote_count: 16000, original_title: "기생충", colors: ['#3e5151', '#decba4'] },
-    { id: 396535, title: "Train to Busan", overview: "Martial law is declared when a mysterious viral outbreak pushes Korea into a state of emergency. Those on an express train must fight for survival.", vote_average: 7.8, release_date: "2016-07-20", original_language: "ko", genre_ids: [28, 27, 53], popularity: 2800, vote_count: 8000, original_title: "부산행", colors: ['#e74c3c', '#c0392b'] },
-    { id: 587996, title: "Concrete Utopia", overview: "When an earthquake devastates Seoul, a single apartment complex remains standing. The survivors form their own community under strict rules.", vote_average: 7.0, release_date: "2023-08-09", original_language: "ko", genre_ids: [18, 53], popularity: 1100, vote_count: 400, original_title: "콘크리트 유토피아", colors: ['#2193b0', '#6dd5ed'] },
+    { id: 1034541, title: "Exhuma", overview: "A famous feng shui master and a young shaman are hired to exhume a grave. But as they dig deeper, they unearth something far more sinister.", vote_average: 7.4, release_date: "2024-02-22", original_language: "ko", genre_ids: [27, 9648], popularity: 1600, vote_count: 500, original_title: "파묘", colors: ['#0f0c29', '#302b63'], poster_path: "/531l0h22FwJ9oH529M3p1C62HnN.jpg", backdrop_path: "/531l0h22FwJ9oH529M3p1C62HnN.jpg" },
+    { id: 496243, title: "Parasite", overview: "Greed and class discrimination threaten the newly formed symbiotic relationship between the wealthy Park family and the destitute Kim clan.", vote_average: 8.5, release_date: "2019-05-30", original_language: "ko", genre_ids: [35, 53, 18], popularity: 3200, vote_count: 16000, original_title: "기생충", colors: ['#3e5151', '#decba4'], poster_path: "/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg", backdrop_path: "/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg" },
+    { id: 396535, title: "Train to Busan", overview: "Martial law is declared when a mysterious viral outbreak pushes Korea into a state of emergency. Those on an express train must fight for survival.", vote_average: 7.8, release_date: "2016-07-20", original_language: "ko", genre_ids: [28, 27, 53], popularity: 2800, vote_count: 8000, original_title: "부산행", colors: ['#e74c3c', '#c0392b'], poster_path: "/1E5baAaEse26fej7uHcjOgEE2t2.jpg", backdrop_path: "/1E5baAaEse26fej7uHcjOgEE2t2.jpg" },
+    { id: 587996, title: "Concrete Utopia", overview: "When an earthquake devastates Seoul, a single apartment complex remains standing. The survivors form their own community under strict rules.", vote_average: 7.0, release_date: "2023-08-09", original_language: "ko", genre_ids: [18, 53], popularity: 1100, vote_count: 400, original_title: "콘크리트 유토피아", colors: ['#2193b0', '#6dd5ed'], poster_path: "/gKkl3gNTUj2t2KP0JQAUn3Qj27g.jpg", backdrop_path: "/gKkl3gNTUj2t2KP0JQAUn3Qj27g.jpg" },
 ];
 
 const SAMPLE_JAPANESE = [
-    { id: 372058, title: "Your Name", overview: "High schoolers Mitsuha and Taki are complete strangers living separate lives. But one night, they suddenly switch places.", vote_average: 8.5, release_date: "2016-08-26", original_language: "ja", genre_ids: [16, 10749, 18], popularity: 3000, vote_count: 10500, original_title: "君の名は。", colors: ['#2b86c5', '#00f5d4'] },
-    { id: 129, title: "Spirited Away", overview: "A young girl finds herself in a mysterious world of spirits after her parents are transformed into pigs by a witch.", vote_average: 8.5, release_date: "2001-07-20", original_language: "ja", genre_ids: [16, 10751, 14], popularity: 2900, vote_count: 15000, original_title: "千と千尋の神隠し", colors: ['#8b5cf6', '#a855f7'] },
-    { id: 508883, title: "Suzume", overview: "A modern-day Japanese girl embarks on a journey across the country to close mysterious doors that are unleashing destruction upon Japan.", vote_average: 7.8, release_date: "2022-11-11", original_language: "ja", genre_ids: [16, 12, 14], popularity: 2500, vote_count: 2100, original_title: "すずめの戸締まり", colors: ['#ff3cac', '#784ba0'] },
-    { id: 4935, title: "Howl's Moving Castle", overview: "When an unconfident young woman is cursed with an old body by a spiteful witch, her only chance of breaking the spell lies with a self-indulgent wizard.", vote_average: 8.4, release_date: "2004-11-19", original_language: "ja", genre_ids: [16, 14, 12], popularity: 2600, vote_count: 8500, original_title: "ハウルの動く城", colors: ['#f7971e', '#ffd200'] },
+    { id: 372058, title: "Your Name", overview: "High schoolers Mitsuha and Taki are complete strangers living separate lives. But one night, they suddenly switch places.", vote_average: 8.5, release_date: "2016-08-26", original_language: "ja", genre_ids: [16, 10749, 18], popularity: 3000, vote_count: 10500, original_title: "君の名は。", colors: ['#2b86c5', '#00f5d4'], poster_path: "/q719jXXEzOoYaps6babgKnONONX.jpg", backdrop_path: "/q719jXXEzOoYaps6babgKnONONX.jpg" },
+    { id: 129, title: "Spirited Away", overview: "A young girl finds herself in a mysterious world of spirits after her parents are transformed into pigs by a witch.", vote_average: 8.5, release_date: "2001-07-20", original_language: "ja", genre_ids: [16, 10751, 14], popularity: 2900, vote_count: 15000, original_title: "千と千尋의神隠し", colors: ['#8b5cf6', '#a855f7'], poster_path: "/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg", backdrop_path: "/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg" },
+    { id: 508883, title: "Suzume", overview: "A modern-day Japanese girl embarks on a journey across the country to close mysterious doors that are unleashing destruction upon Japan.", vote_average: 7.8, release_date: "2022-11-11", original_language: "ja", genre_ids: [16, 12, 14], popularity: 2500, vote_count: 2100, original_title: "すずめの戸締まり", colors: ['#ff3cac', '#784ba0'], poster_path: "/vIeu8WysZrTSFb2uhPViKjX9EcC.jpg", backdrop_path: "/vIeu8WysZrTSFb2uhPViKjX9EcC.jpg" },
+    { id: 4935, title: "Howl's Moving Castle", overview: "When an unconfident young woman is cursed with an old body by a spiteful witch, her only chance of breaking the spell lies with a self-indulgent wizard.", vote_average: 8.4, release_date: "2004-11-19", original_language: "ja", genre_ids: [16, 14, 12], popularity: 2600, vote_count: 8500, original_title: "ハウルの動く城", colors: ['#f7971e', '#ffd200'], poster_path: "/yeJ5Nj1k2NA0bBZjkZ10PvQKjTD.jpg", backdrop_path: "/yeJ5Nj1k2NA0bBZjkZ10PvQKjTD.jpg" },
 ];
 
 // Process sample movies to add poster/backdrop data URIs
 function processSampleMovies(movies) {
-    return movies.map(m => ({
-        ...m,
-        poster_path: null,           // We won't use TMDB image paths
-        backdrop_path: null,
-        _posterUrl: generatePosterSvg(m.title, m.colors?.[0], m.colors?.[1]),
-        _backdropUrl: generateBackdropSvg(m.title, m.colors?.[0], m.colors?.[1]),
-    }));
+    return movies.map(m => {
+        const posterUrl = m.poster_path ? `https://image.tmdb.org/t/p/w342${m.poster_path}` : generatePosterSvg(m.title, m.colors?.[0], m.colors?.[1]);
+        const backdropUrl = m.backdrop_path ? `https://image.tmdb.org/t/p/w780${m.backdrop_path}` : generateBackdropSvg(m.title, m.colors?.[0], m.colors?.[1]);
+        return {
+            ...m,
+            _posterUrl: posterUrl,
+            _backdropUrl: backdropUrl
+        };
+    });
 }
 
 const SAMPLE_MOVIES = {
@@ -207,10 +209,9 @@ async function tmdbFetch(endpoint, params = {}) {
     
     // If we've already detected we should use fallback, go direct
     if (isUsingFallback) {
-        const fallbackKey = 'AIzaSyAlMLhAhPwKgZiTeGWeZiE9MsyrwOc8XIg';
-        if (fallbackKey.startsWith('AIzaSy') || fallbackKey === 'YOUR_API_KEY_HERE') {
+        const fallbackKey = 'd5a864d4b31a89c894e2e2ec8b4d8d1e';
+        if (!fallbackKey || fallbackKey === 'YOUR_API_KEY_HERE' || fallbackKey.startsWith('AIzaSy')) {
             // Firebase API key mistakenly configured as TMDB key, or unconfigured key.
-            // Avoid calling TMDB with invalid credentials (which 401s) to eliminate unnecessary network lag.
             return null;
         }
         url = new URL(`${CONFIG.TMDB_BASE}${endpoint}`);
@@ -224,7 +225,7 @@ async function tmdbFetch(endpoint, params = {}) {
     Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 3000);
+    const timeout = setTimeout(() => controller.abort(), 5000); // Expanded timeout to 5s for slower connections
 
     try {
         const resp = await fetch(url, { signal: controller.signal });
@@ -234,8 +235,12 @@ async function tmdbFetch(endpoint, params = {}) {
         return data;
     } catch (e) {
         clearTimeout(timeout);
-        console.warn(`TMDB fetch failed for ${endpoint}. Switching to fallback mode.`);
-        isUsingFallback = true; // Set global flag for next requests
+        if (!isUsingFallback) {
+            console.warn(`TMDB fetch failed for ${endpoint} via proxy. Retrying directly with client fallback key...`);
+            isUsingFallback = true;
+            return tmdbFetch(endpoint, params); // Instant recursive retry directly on client
+        }
+        console.error(`TMDB fetch failed entirely for ${endpoint}`, e);
         return null;
     }
 }
@@ -243,13 +248,23 @@ async function tmdbFetch(endpoint, params = {}) {
 // === Image Helpers ===
 function getMoviePoster(movie) {
     if (movie._posterUrl) return movie._posterUrl;
-    if (movie.poster_path) return `${CONFIG.IMG_BASE}/w342${movie.poster_path}`; // Optimized from w500 to w342 for ultra-fast loading
+    if (movie.poster_path) {
+        if (movie.poster_path.startsWith('http') || movie.poster_path.startsWith('data:')) {
+            return movie.poster_path;
+        }
+        return `${CONFIG.IMG_BASE}/w342${movie.poster_path}`; // Optimized from w500 to w342 for ultra-fast loading
+    }
     return generatePosterSvg(movie.title || 'Movie', '#ff3cac', '#784ba0');
 }
 
 function getMovieBackdrop(movie) {
     if (movie._backdropUrl) return movie._backdropUrl;
-    if (movie.backdrop_path) return `${CONFIG.IMG_BASE}/w780${movie.backdrop_path}`; // Optimized from original to w780 for 10x faster loading
+    if (movie.backdrop_path) {
+        if (movie.backdrop_path.startsWith('http') || movie.backdrop_path.startsWith('data:')) {
+            return movie.backdrop_path;
+        }
+        return `${CONFIG.IMG_BASE}/w780${movie.backdrop_path}`; // Optimized from original to w780 for 10x faster loading
+    }
     return generateBackdropSvg(movie.title || 'CineVerse');
 }
 
@@ -1428,6 +1443,21 @@ function setupGlobalListeners() {
             heroBackdrop.style.transform = `translateY(${scrollY * 0.4}px)`;
         }
     }, { passive: true });
+
+    // Search Suggestion tags click delegate
+    document.addEventListener('click', (e) => {
+        const tag = e.target.closest('.suggestion-tag');
+        if (tag) {
+            const query = tag.dataset.query || tag.textContent.trim();
+            const searchInput = $('#searchInput');
+            const searchContainer = $('#searchContainer');
+            if (searchInput && searchContainer) {
+                searchContainer.classList.add('active');
+                searchInput.value = query;
+                handleSearch(query);
+            }
+        }
+    });
 }
 
 async function handleSearch(query) {
@@ -1474,10 +1504,21 @@ async function handleSearch(query) {
     
     if (!movies || movies.length === 0) {
         grid.innerHTML = `
-            <div style="grid-column: 1/-1; text-align: center; padding: 40px 20px; color: var(--text-muted);">
-                <p style="font-size: 1.1rem; margin-bottom: 8px;">No matches found for "${escapeXml(query)}" in offline mode.</p>
-                <p style="font-size: 0.9rem; margin-bottom: 24px; opacity: 0.8;">Try searching: <strong>"Venom", "Deadpool", "Dune", "Stree", "Parasite", "Spirited"</strong></p>
-                <h3 style="color: var(--text); margin-bottom: 20px; text-align: left; border-left: 4px solid var(--accent); padding-left: 10px; font-weight: 600;">Recommended Movies</h3>
+            <div class="no-results-container">
+                <div class="no-results-icon">
+                    <i class="fas fa-search-minus"></i>
+                </div>
+                <h2 class="no-results-title">No Movie Found</h2>
+                <p class="no-results-msg">We couldn't find any matches for "<strong>${escapeXml(query)}</strong>". Try clicking one of our popular recommendation tags below, or browse through the featured collection!</p>
+                <div class="no-results-suggestions">
+                    <span class="suggestion-tag" data-query="Venom">Venom</span>
+                    <span class="suggestion-tag" data-query="Deadpool">Deadpool & Wolverine</span>
+                    <span class="suggestion-tag" data-query="Dune">Dune: Part Two</span>
+                    <span class="suggestion-tag" data-query="Stree">Stree 2</span>
+                    <span class="suggestion-tag" data-query="Parasite">Parasite</span>
+                    <span class="suggestion-tag" data-query="Spirited">Spirited Away</span>
+                </div>
+                <div class="no-results-rec-header">Trending Recommendations</div>
             </div>
         `;
         // Append popular mock movies so the page is never empty

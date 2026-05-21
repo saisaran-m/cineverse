@@ -2666,15 +2666,310 @@ html {
          d i s p l a y :   f l e x ; 
          a l i g n - i t e m s :   c e n t e r ; 
          j u s t i f y - c o n t e n t :   c e n t e r ; 
-         c u r s o r :   p o i n t e r ; 
-         t r a n s i t i o n :   a l l   0 . 2 s   e a s e ; 
-         m a r g i n - l e f t :   1 0 p x ; 
- } 
- 
- . w a t c h - t o g e t h e r - m i n i - b t n : h o v e r   { 
-         b a c k g r o u n d :   v a r ( - - g r a d i e n t - p r i m a r y ) ; 
-         c o l o r :   w h i t e ; 
-         b o r d e r - c o l o r :   t r a n s p a r e n t ; 
-         t r a n s f o r m :   t r a n s l a t e Y ( - 2 p x ) ; 
- }  
- 
+.server-btn.active {
+    background: var(--gradient-primary);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(255, 60, 172, 0.3);
+}
+
+@media (max-width: 768px) {
+    .player-container { width: 100%; border-radius: 0; height: 100%; display: flex; flex-direction: column; }
+    .player-wrapper { aspect-ratio: auto; flex: 1; }
+    .player-controls-bar { padding: 15px; }
+    .server-controls { gap: 6px; }
+    .server-btn { padding: 6px 12px; font-size: 0.75rem; }
+}
+
+/* === Fullscreen Optimization (Surgical Addition) === */
+.player-container:fullscreen {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none !important;
+    border-radius: 0 !important;
+    display: flex;
+    flex-direction: column;
+}
+
+.player-container:-webkit-full-screen {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none !important;
+    border-radius: 0 !important;
+    display: flex;
+    flex-direction: column;
+}
+
+.player-container:fullscreen .player-wrapper {
+    flex: 1;
+}
+
+/* ============================================
+   APP DOWNLOAD BANNER
+   ============================================ */
+.app-download-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    background: linear-gradient(135deg, rgba(10, 10, 26, 0.97), rgba(20, 15, 40, 0.97));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 60, 172, 0.25);
+    padding: 12px 20px;
+    animation: slideUpBanner 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.app-download-banner.hidden {
+    animation: slideDownBanner 0.3s ease forwards;
+    pointer-events: none;
+}
+
+@keyframes slideUpBanner {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideDownBanner {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(100%); opacity: 0; }
+}
+
+.app-download-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.app-download-icon {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.app-download-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.app-download-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.app-download-text strong {
+    color: #fff;
+    font-size: 0.95rem;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.app-download-text span {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.75rem;
+    font-family: 'Inter', sans-serif;
+}
+
+.app-download-btn {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 22px;
+    background: linear-gradient(135deg, #ff3cac, #784ba0, #2b86c5);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-family: 'Outfit', sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 60, 172, 0.3);
+    letter-spacing: 0.5px;
+}
+
+.app-download-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 25px rgba(255, 60, 172, 0.5);
+}
+
+.app-download-close {
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.7rem;
+}
+
+.app-download-close:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+/* Hide on very small screens when keyboard is up */
+@media (max-height: 400px) {
+    .app-download-banner {
+        display: none;
+    }
+}
+/* === New Logo Styling === */
+.nav-logo-img {
+    height: 40px;
+    width: auto;
+    border-radius: 8px;
+    margin-right: 12px;
+    filter: drop-shadow(0 0 10px rgba(255, 60, 172, 0.4));
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.logo:hover .nav-logo-img {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 15px rgba(255, 60, 172, 0.7));
+}
+
+ / *   S u b t l e   W a t c h   T o g e t h e r   M i n i - B u t t o n   * / 
+ . w a t c h - t o g e t h e r - m i n i - b t n   { 
+         b a c k g r o u n d :   r g b a ( 2 5 5 ,   2 5 5 ,   2 5 5 ,   0 . 0 5 ) ; 
+         b o r d e r :   1 p x   s o l i d   r g b a ( 2 5 5 ,   2 5 5 ,   2 5 5 ,   0 . 1 ) ; 
+         c o l o r :   v a r ( - - t e x t - s e c o n d a r y ) ; 
+         w i d t h :   3 6 p x ; 
+         h e i g h t :   3 6 p x ; 
+         b o r d e r - r a d i u s :   8 p x ; 
+         d i s p l a y :   f l e x ; 
+         a l i g n - i t e m s :   c e n t e r ; 
+         j u s t i f y - c o n t e n t :   c e n t e r ; 
+         c u r s o r :   p o i n t e r ; 
+         t r a n s i t i o n :   a l l   0 . 2 s   e a s e ; 
+         m a r g i n - l e f t :   1 0 p x ; 
+ } 
+ 
+ . w a t c h - t o g e t h e r - m i n i - b t n : h o v e r   { 
+         b a c k g r o u n d :   v a r ( - - g r a d i e n t - p r i m a r y ) ; 
+         c o l o r :   w h i t e ; 
+         b o r d e r - c o l o r :   t r a n s p a r e n t ; 
+         t r a n s f o r m :   t r a n s l a t e Y ( - 2 p x ) ; 
+ }  
+
+/* === Premium No Results Container === */
+.no-results-container {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 40px;
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 2px dashed rgba(255, 255, 255, 0.08);
+    border-radius: var(--card-radius);
+    margin: 20px 0;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.01);
+}
+
+.no-results-container:hover {
+    border-color: rgba(255, 60, 172, 0.3);
+    background: rgba(255, 255, 255, 0.03);
+    box-shadow: inset 0 0 30px rgba(255, 60, 172, 0.02);
+}
+
+.no-results-icon {
+    font-size: 3.5rem;
+    color: var(--accent-primary);
+    margin-bottom: 24px;
+    filter: drop-shadow(0 0 15px rgba(255, 60, 172, 0.5));
+    animation: pulseSearchIcon 2s infinite ease-in-out;
+}
+
+@keyframes pulseSearchIcon {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.9;
+        filter: drop-shadow(0 0 10px rgba(255, 60, 172, 0.4));
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+        filter: drop-shadow(0 0 25px rgba(255, 60, 172, 0.8));
+    }
+}
+
+.no-results-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+}
+
+.no-results-msg {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    max-width: 500px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.no-results-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    max-width: 600px;
+    margin-bottom: 20px;
+}
+
+.suggestion-tag {
+    background: rgba(255, 60, 172, 0.1);
+    border: 1px solid rgba(255, 60, 172, 0.2);
+    color: var(--text);
+    padding: 8px 18px;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.suggestion-tag:hover {
+    background: var(--gradient-primary);
+    border-color: transparent;
+    box-shadow: 0 0 15px rgba(255, 60, 172, 0.4);
+    transform: translateY(-2px);
+}
+
+.no-results-rec-header {
+    width: 100%;
+    text-align: left;
+    margin-top: 40px;
+    margin-bottom: 24px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+    border-left: 4px solid var(--accent-primary);
+    padding-left: 14px;
+}
