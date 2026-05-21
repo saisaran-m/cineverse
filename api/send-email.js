@@ -1,3 +1,5 @@
+import nodemailer from 'nodemailer';
+
 export default async function handler(req, res) {
     // CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -18,13 +20,14 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Missing email address' });
     }
 
-    const RESEND_API_KEY = process.env.RESEND_API_KEY;
+    const EMAIL_USER = process.env.EMAIL_USER;
+    const EMAIL_PASS = process.env.EMAIL_PASS; // Gmail App Password (16 characters)
 
-    if (!RESEND_API_KEY) {
+    if (!EMAIL_USER || !EMAIL_PASS) {
         return res.status(200).json({
             success: false,
             simulated: true,
-            message: 'RESEND_API_KEY not configured. Email simulated on client.',
+            message: 'EMAIL_USER or EMAIL_PASS not configured in Vercel. Simulated on client.',
             email,
             name: name || 'CineVerse User',
             type: type || 'login_alert'
@@ -151,44 +154,35 @@ export default async function handler(req, res) {
 </html>`;
 
     try {
-        const response = await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${RESEND_API_KEY}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                from: 'CineVerse <onboarding@resend.dev>',
-                to: [email],
-                subject: subject,
-                html: htmlBody
-            })
+        // Create a Nodemailer transporter using Gmail SMTP
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: EMAIL_USER,
+                pass: EMAIL_PASS // Generated Gmail App Password
+            }
         });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            console.error('Resend API Error:', data);
-            return res.status(200).json({
-                success: false,
-                simulated: true,
-                message: 'Email service error. Simulated on client.',
-                error: data
-            });
-        }
+        // Send mail with custom details
+        await transporter.sendMail({
+            from: `"CineVerse" <${EMAIL_USER}>`,
+            to: email,
+            subject: subject,
+            html: htmlBody
+        });
 
         return res.status(200).json({
             success: true,
             simulated: false,
-            message: `Email sent successfully to ${email}`,
-            id: data.id
+            message: `Email sent successfully to ${email} from ${EMAIL_USER}`
         });
     } catch (error) {
-        console.error('Email dispatch error:', error);
+        console.error('Nodemailer SMTP Dispatch Error:', error);
         return res.status(200).json({
             success: false,
             simulated: true,
-            message: 'Network error. Email simulated on client.'
+            message: 'Gmail SMTP dispatch failed. Simulated on client.',
+            error: error.message || error
         });
     }
 }
