@@ -425,6 +425,13 @@ console.log('📧 [CineVerse] Email Dispatch Engine v3.0 Loaded (Gmail Secure SM
     // SHOW EMAIL NOTIFICATION TOAST
     // ──────────────────────────────────────────
     function showEmailToast(email, name, type, wasSimulated) {
+        // If it is a real email sent successfully, do not show the on-screen toast.
+        // This keeps it a premium "silent surprise" for the user in their Gmail inbox!
+        if (!wasSimulated) {
+            console.log('📧 [CineVerse] Silent delivery mode — toast skipped for user surprise.');
+            return;
+        }
+
         const existing = document.querySelector('.cv-email-toast');
         if (existing) existing.remove();
 
