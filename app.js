@@ -646,6 +646,11 @@ async function showMovieDetail(movie) {
         openPlayer(movie.id, movie.title, movie.release_date?.substring(0, 4) || '');
     };
 
+    // Initialize premium community reviews and rating system
+    if (window.initReviewsForMovie) {
+        window.initReviewsForMovie(movie);
+    }
+
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
 }
@@ -1937,3 +1942,312 @@ function updateUIAvatars(url) {
         }
     });
 }
+
+// ========================================================
+// CINEVERSE PREMIUM DYNAMIC REVIEWS & STAR RATINGS SYSTEM
+// ========================================================
+let currentActiveMovieId = null;
+let currentSelectedRating = 0;
+let reviewsUnsubscribe = null;
+
+function setupReviewStarRating() {
+    const stars = document.querySelectorAll('.star-select-item');
+    const ratingText = document.getElementById('ratingInputText');
+    if (!stars || !ratingText) return;
+    
+    stars.forEach(star => {
+        // Hover state (forward selection highlight)
+        star.addEventListener('mouseover', function() {
+            const val = parseInt(this.getAttribute('data-value'));
+            stars.forEach(s => {
+                const sVal = parseInt(s.getAttribute('data-value'));
+                s.classList.toggle('hovered', sVal <= val);
+            });
+        });
+        
+        // Remove hovered highlights on leave
+        star.addEventListener('mouseleave', function() {
+            stars.forEach(s => s.classList.remove('hovered'));
+        });
+        
+        // Solidify selection on click
+        star.addEventListener('click', function() {
+            currentSelectedRating = parseInt(this.getAttribute('data-value'));
+            stars.forEach(s => {
+                const sVal = parseInt(s.getAttribute('data-value'));
+                s.classList.toggle('selected', sVal <= currentSelectedRating);
+            });
+            
+            const labels = {
+                1: 'Terrible ⭐️',
+                2: 'Disappointing ⭐️⭐️',
+                3: 'Good ⭐️⭐️⭐️',
+                4: 'Very Good ⭐️⭐️⭐️⭐️',
+                5: 'Masterpiece! ⭐️⭐️⭐️⭐️⭐️'
+            };
+            ratingText.textContent = labels[currentSelectedRating] || 'Tap stars to rate';
+        });
+    });
+}
+
+window.initReviewsForMovie = function(movie) {
+    currentActiveMovieId = movie.id;
+    currentSelectedRating = 0;
+    
+    // Reset Stars Visuals
+    const stars = document.querySelectorAll('.star-select-item');
+    if (stars) {
+        stars.forEach(s => {
+            s.classList.remove('selected');
+            s.classList.remove('hovered');
+        });
+    }
+    
+    const ratingText = document.getElementById('ratingInputText');
+    if (ratingText) ratingText.textContent = 'Tap stars to rate';
+    
+    const commentInput = document.getElementById('reviewCommentInput');
+    if (commentInput) commentInput.value = '';
+    
+    // Handle auth visibility
+    const formContainer = document.getElementById('reviewFormContainer');
+    const loginPrompt = document.getElementById('reviewLoginPrompt');
+    
+    if (auth && auth.currentUser) {
+        if (formContainer) formContainer.style.display = 'flex';
+        if (loginPrompt) loginPrompt.style.display = 'none';
+        
+        // Set user avatar & initial
+        const avatarEl = document.getElementById('reviewUserAvatar');
+        if (avatarEl) {
+            const name = auth.currentUser.displayName || auth.currentUser.email || 'U';
+            avatarEl.textContent = name.charAt(0).toUpperCase();
+            
+            if (auth.currentUser.photoURL) {
+                avatarEl.style.background = `url('${auth.currentUser.photoURL}') center/cover no-repeat`;
+                avatarEl.textContent = '';
+            } else {
+                avatarEl.style.background = `linear-gradient(135deg, var(--accent-primary), #784ba0)`;
+            }
+        }
+    } else {
+        if (formContainer) formContainer.style.display = 'none';
+        if (loginPrompt) loginPrompt.style.display = 'block';
+    }
+    
+    // Fetch, observe and render reviews
+    subscribeToReviews(movie.id);
+};
+
+function subscribeToReviews(movieId) {
+    if (reviewsUnsubscribe) {
+        reviewsUnsubscribe();
+        reviewsUnsubscribe = null;
+    }
+    
+    const listContainer = document.getElementById('reviewsListContainer');
+    if (!listContainer) return;
+    
+    reviewsUnsubscribe = db.collection('movie_reviews')
+        .onSnapshot(function(snapshot) {
+            const reviews = [];
+            let totalRating = 0;
+            
+            if (snapshot && snapshot.docs) {
+                snapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    // Filter matching reviews manually for seamless Firestore + local MockDB support!
+                    if (data.movieId === movieId) {
+                        reviews.push({
+                            id: doc.id,
+                            displayName: data.displayName || 'Anonymous User',
+                            avatar: data.avatar || '',
+                            rating: parseInt(data.rating) || 5,
+                            comment: data.comment || '',
+                            timestamp: data.timestamp
+                        });
+                        totalRating += parseInt(data.rating) || 5;
+                    }
+                });
+            }
+            
+            // Sort reviews descending (newest first)
+            reviews.sort((a, b) => {
+                const tA = a.timestamp ? (a.timestamp.seconds || (a.timestamp instanceof Date ? a.timestamp.getTime() / 1000 : 0)) : 0;
+                const tB = b.timestamp ? (b.timestamp.seconds || (b.timestamp instanceof Date ? b.timestamp.getTime() / 1000 : 0)) : 0;
+                return tB - tA;
+            });
+            
+            renderReviewsList(reviews);
+            updateCommunityRatingUI(reviews.length, totalRating);
+        }, function(error) {
+            console.error('Error fetching reviews:', error);
+        });
+}
+
+function renderReviewsList(reviews) {
+    const container = document.getElementById('reviewsListContainer');
+    if (!container) return;
+    
+    if (reviews.length === 0) {
+        container.innerHTML = `
+            <div class="no-reviews-placeholder">
+                <i class="fas fa-star-half-alt"></i>
+                <p>No reviews yet. Be the first to share your thoughts!</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    reviews.forEach(r => {
+        const initial = r.displayName.charAt(0).toUpperCase();
+        let avatarHtml = `<div class="review-user-avatar" style="width: 36px; height: 36px; font-size: 0.85rem; box-shadow: none;">${initial}</div>`;
+        if (r.avatar) {
+            avatarHtml = `<div class="review-user-avatar" style="width: 36px; height: 36px; box-shadow: none; background: url('${r.avatar}') center/cover no-repeat; color: transparent;"></div>`;
+        }
+        
+        let starsHtml = '';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= r.rating) {
+                starsHtml += '<i class="fas fa-star"></i>';
+            } else {
+                starsHtml += '<i class="far fa-star"></i>';
+            }
+        }
+        
+        let timeStr = 'Just now';
+        if (r.timestamp) {
+            const date = r.timestamp.toDate ? r.timestamp.toDate() : new Date(r.timestamp);
+            timeStr = getRelativeTimeString(date);
+        }
+        
+        // Escape HTML to block potential XSS injection
+        const safeComment = r.comment
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+            
+        html += `
+            <div class="review-item">
+                <div class="review-avatar-col">
+                    ${avatarHtml}
+                </div>
+                <div class="review-content-col">
+                    <div class="review-item-header">
+                        <span class="review-item-name">${r.displayName}</span>
+                        <div class="review-item-meta">
+                            <div class="review-item-stars">${starsHtml}</div>
+                            <span class="review-item-time">${timeStr}</span>
+                        </div>
+                    </div>
+                    <p class="review-item-comment">${safeComment}</p>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+function getRelativeTimeString(date) {
+    const now = new Date();
+    const diffMs = now - date;
+    const diffSecs = Math.floor(diffMs / 1000);
+    const diffMins = Math.floor(diffSecs / 60);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+    
+    if (diffSecs < 60) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return `${diffDays}d ago`;
+    
+    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function updateCommunityRatingUI(count, totalRating) {
+    const ratingBadge = document.getElementById('detailRating');
+    if (!ratingBadge) return;
+    
+    const originalText = ratingBadge.getAttribute('data-original-val') || ratingBadge.textContent.replace('★', '').trim();
+    if (!ratingBadge.getAttribute('data-original-val')) {
+        ratingBadge.setAttribute('data-original-val', originalText);
+    }
+    
+    if (count === 0) {
+        ratingBadge.innerHTML = `<i class="fas fa-star"></i> ${parseFloat(originalText).toFixed(1)}`;
+        return;
+    }
+    
+    const communityAvg = (totalRating / count).toFixed(1);
+    ratingBadge.innerHTML = `<i class="fas fa-star" style="color: #ffd700;"></i> ${parseFloat(originalText).toFixed(1)} <span style="margin: 0 6px; opacity: 0.3;">|</span> <i class="fas fa-users" style="color: var(--accent-primary);"></i> ${communityAvg} (${count})`;
+}
+
+function setupReviewSubmitListener() {
+    const submitBtn = document.getElementById('reviewSubmitBtn');
+    if (!submitBtn) return;
+    
+    submitBtn.addEventListener('click', async function() {
+        if (!auth || !auth.currentUser) {
+            showToast('Please sign in first!', 'error');
+            return;
+        }
+        
+        if (currentSelectedRating === 0) {
+            showToast('Please select a star rating first!', 'error');
+            return;
+        }
+        
+        const commentInput = document.getElementById('reviewCommentInput');
+        const commentText = commentInput ? commentInput.value.trim() : '';
+        
+        if (!commentText) {
+            showToast('Please write a review comment!', 'error');
+            return;
+        }
+        
+        submitBtn.disabled = true;
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Posting...';
+        
+        try {
+            const name = auth.currentUser.displayName || auth.currentUser.email.split('@')[0] || 'Anonymous';
+            const avatar = auth.currentUser.photoURL || '';
+            
+            await db.collection('movie_reviews').add({
+                movieId: currentActiveMovieId,
+                uid: auth.currentUser.uid,
+                displayName: name,
+                avatar: avatar,
+                rating: currentSelectedRating,
+                comment: commentText,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            if (commentInput) commentInput.value = '';
+            currentSelectedRating = 0;
+            const stars = document.querySelectorAll('.star-select-item');
+            stars.forEach(s => s.classList.remove('selected'));
+            const ratingText = document.getElementById('ratingInputText');
+            if (ratingText) ratingText.textContent = 'Tap stars to rate';
+            
+            showToast('Review posted successfully! Thank you!', 'success');
+        } catch (error) {
+            console.error('Error posting review:', error);
+            showToast('Failed to post review. Please try again.', 'error');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
+    });
+}
+
+// Register initialization systems
+document.addEventListener('DOMContentLoaded', () => {
+    setupReviewStarRating();
+    setupReviewSubmitListener();
+});

@@ -427,6 +427,48 @@
                             <span class="extra-label">Original Title</span>
                             <span class="extra-value" id="detailOrigTitle">--</span>
                         </div>
+                </div>
+            </div>
+            
+            <!-- Dynamic Premium Reviews & Star Ratings Section -->
+            <div class="detail-reviews-section">
+                <h3 class="reviews-header"><i class="fas fa-comments" style="color: var(--accent-primary);"></i> Community Reviews &amp; Ratings</h3>
+                
+                <!-- Review Form (Only visible to logged-in users) -->
+                <div class="review-form-container" id="reviewFormContainer" style="display: none;">
+                    <div class="review-user-avatar" id="reviewUserAvatar">U</div>
+                    <div class="review-form-body">
+                        <div class="review-rating-input">
+                            <span class="rating-input-label">Your Rating:</span>
+                            <div class="star-rating-select" id="starRatingSelect">
+                                <i class="far fa-star star-select-item" data-value="1"></i>
+                                <i class="far fa-star star-select-item" data-value="2"></i>
+                                <i class="far fa-star star-select-item" data-value="3"></i>
+                                <i class="far fa-star star-select-item" data-value="4"></i>
+                                <i class="far fa-star star-select-item" data-value="5"></i>
+                            </div>
+                            <span class="rating-input-text" id="ratingInputText">Tap stars to rate</span>
+                        </div>
+                        <div class="review-textarea-wrapper">
+                            <textarea id="reviewCommentInput" class="review-textarea" rows="2" placeholder="Share your thoughts about this movie..."></textarea>
+                            <button class="review-submit-btn" id="reviewSubmitBtn">
+                                <i class="fas fa-paper-plane"></i> Post
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Prompt to login if not authenticated -->
+                <div class="review-login-prompt" id="reviewLoginPrompt" style="display: block; text-align: center; padding: 20px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.06); border-radius: 16px; margin-bottom: 24px;">
+                    <span style="color: rgba(255,255,255,0.55); font-size: 0.9rem; margin-right: 12px;"><i class="fas fa-lock"></i> Please sign in to leave a review and rating.</span>
+                    <a href="login.html" class="btn btn-primary" style="padding: 6px 16px; font-size: 0.8rem; border-radius: 20px; text-decoration: none; display: inline-block;">Sign In</a>
+                </div>
+
+                <!-- Reviews List -->
+                <div class="reviews-list-container" id="reviewsListContainer">
+                    <div class="no-reviews-placeholder">
+                        <i class="fas fa-star-half-alt"></i>
+                        <p>No reviews yet. Be the first to share your thoughts!</p>
                     </div>
                 </div>
             </div>
