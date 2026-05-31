@@ -1475,6 +1475,7 @@ html {
 
 .detail-content {
     display: flex;
+    flex-wrap: wrap !important;
     gap: 30px;
     padding: 0 30px 30px;
     margin-top: -100px;
@@ -2978,17 +2979,18 @@ html {
    CINEVERSE PREMIUM REVIEWS & RATINGS SYSTEM
    ============================================ */
 .detail-reviews-section {
-    padding: 30px;
-    border-top: 1px solid var(--border-glass);
-    background: rgba(255, 255, 255, 0.015);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 20px;
-    max-width: 840px;
-    margin: 30px auto;
-    width: 100%;
-    clear: both;
-    box-sizing: border-box;
-    display: block;
+    padding: 30px !important;
+    border-top: 1px solid var(--border-glass) !important;
+    background: rgba(255, 255, 255, 0.015) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 20px !important;
+    max-width: 840px !important;
+    margin: 30px auto !important;
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    clear: both !important;
+    box-sizing: border-box !important;
+    display: block !important;
 }
 
 .reviews-header {
@@ -3011,15 +3013,15 @@ html {
 
 /* Review Form */
 .review-form-container {
-    display: flex;
-    gap: 16px;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.04);
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 24px;
-    box-sizing: border-box;
-    width: 100%;
+    display: flex !important;
+    gap: 16px !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid rgba(255, 255, 255, 0.04) !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+    margin-bottom: 24px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
 }
 
 .review-user-avatar {
@@ -3038,11 +3040,11 @@ html {
 }
 
 .review-form-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    min-width: 0;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    min-width: 0 !important;
 }
 
 .review-rating-input {
@@ -3089,51 +3091,52 @@ html {
 }
 
 .review-textarea-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    align-items: flex-end;
-    width: 100%;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    align-items: flex-end !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
 .review-textarea {
-    width: 100%;
-    min-height: 90px;
-    box-sizing: border-box;
-    background: rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    padding: 12px;
-    color: #ffffff;
-    font-family: inherit;
-    font-size: 0.9rem;
-    resize: none;
-    outline: none;
-    transition: all 0.3s ease;
+    width: 100% !important;
+    min-height: 90px !important;
+    box-sizing: border-box !important;
+    background: rgba(0, 0, 0, 0.25) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 12px !important;
+    padding: 12px !important;
+    color: #ffffff !important;
+    font-family: inherit !important;
+    font-size: 0.9rem !important;
+    resize: none !important;
+    outline: none !important;
+    transition: all 0.3s ease !important;
 }
 
 .review-textarea:focus {
-    border-color: var(--accent-primary);
-    box-shadow: 0 0 10px rgba(255, 60, 172, 0.15);
-    background: rgba(0, 0, 0, 0.35);
+    border-color: var(--accent-primary) !important;
+    box-shadow: 0 0 10px rgba(255, 60, 172, 0.15) !important;
+    background: rgba(0, 0, 0, 0.35) !important;
 }
 
 .review-submit-btn {
-    background: linear-gradient(135deg, var(--accent-primary), #784ba0);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    padding: 12px 20px;
-    font-size: 0.9rem;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    height: 44px;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 6px 20px rgba(255, 60, 172, 0.25);
-    align-self: flex-end;
+    background: linear-gradient(135deg, var(--accent-primary), #784ba0) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 12px 20px !important;
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    height: 44px !important;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    box-shadow: 0 6px 20px rgba(255, 60, 172, 0.25) !important;
+    align-self: flex-end !important;
 }
 
 .review-submit-btn:hover {
