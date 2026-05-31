@@ -1,9 +1,9 @@
 {
-    "id": "/",
+    "id": "cineverse-sai-pwa",
     "name": "CineVerse",
     "short_name": "CineVerse",
     "description": "Stream Movies in Every Language — Watch the latest movies, top-rated films, and blockbusters from around the world.",
-    "start_url": "/",
+    "start_url": "/index.html",
     "display": "standalone",
     "background_color": "#0a0a1a",
     "theme_color": "#0a0a1a",
@@ -13,20 +13,63 @@
     "dir": "ltr",
     "icons": [
         {
-            "src": "assets/logo.png",
-            "sizes": "192x192",
+            "src": "icons/icon-72.png",
+            "sizes": "72x72",
             "type": "image/png",
-            "purpose": "any maskable"
+            "purpose": "any"
         },
         {
-            "src": "assets/logo.png",
+            "src": "icons/icon-96.png",
+            "sizes": "96x96",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icons/icon-128.png",
+            "sizes": "128x128",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icons/icon-144.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icons/icon-384.png",
+            "sizes": "384x384",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icons/icon-512.png",
             "sizes": "512x512",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
         }
     ],
     "screenshots": [
         {
-            "src": "/og-preview.png",
+            "src": "og-preview.png",
             "sizes": "1200x630",
             "type": "image/png",
             "form_factor": "wide"
