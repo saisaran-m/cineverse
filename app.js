@@ -1590,7 +1590,8 @@ function loadMainContent(shouldScroll = true) {
         loadTrending(),
         loadTopRated(),
         loadUpcoming(),
-        loadGenres()
+        loadGenres(),
+        loadLanguages()
     ]).then(() => {
         console.log('✅ All content sections initialized');
     });
