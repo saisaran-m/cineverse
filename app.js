@@ -2025,7 +2025,7 @@ window.initReviewsForMovie = function(movie) {
             avatarEl.textContent = name.charAt(0).toUpperCase();
             
             if (auth.currentUser.photoURL) {
-                avatarEl.style.background = `url('${auth.currentUser.photoURL}') center/cover no-repeat`;
+                avatarEl.style.background = `url('${safeAvatarUrl(auth.currentUser.photoURL)}') center/cover no-repeat`;
                 avatarEl.textContent = '';
             } else {
                 avatarEl.style.background = `linear-gradient(135deg, var(--accent-primary), #784ba0)`;
@@ -2049,7 +2049,9 @@ function subscribeToReviews(movieId) {
     const listContainer = document.getElementById('reviewsListContainer');
     if (!listContainer) return;
     
+    // Database-level filtering for optimal performance and zero wasteful downloads
     reviewsUnsubscribe = db.collection('movie_reviews')
+        .where('movieId', 'in', [Number(movieId), String(movieId)])
         .onSnapshot(function(snapshot) {
             const reviews = [];
             let totalRating = 0;
@@ -2057,17 +2059,17 @@ function subscribeToReviews(movieId) {
             if (snapshot && snapshot.docs) {
                 snapshot.docs.forEach(doc => {
                     const data = doc.data();
-                    // Filter matching reviews — use loose == to handle number/string mismatch
+                    // Additional safety filter
                     if (data.movieId == movieId) {
                         reviews.push({
                             id: doc.id,
                             displayName: data.displayName || 'Anonymous User',
                             avatar: data.avatar || '',
-                            rating: parseInt(data.rating) || 5,
+                            rating: (data.rating !== null && data.rating !== undefined) ? parseInt(data.rating) : 5,
                             comment: data.comment || '',
                             timestamp: data.timestamp
                         });
-                        totalRating += parseInt(data.rating) || 5;
+                        totalRating += (data.rating !== null && data.rating !== undefined) ? parseInt(data.rating) : 5;
                     }
                 });
             }
@@ -2086,6 +2088,27 @@ function subscribeToReviews(movieId) {
         });
 }
 
+// Security: Escapes HTML to fully secure against Stored XSS injections
+function escapeHTML(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+// Security: Sanitizes avatar image URL to fully secure against CSS background breakout/injection
+function safeAvatarUrl(url) {
+    if (!url) return '';
+    return String(url)
+        .replace(/'/g, '%27')
+        .replace(/"/g, '%22')
+        .replace(/\(/g, '%28')
+        .replace(/\)/g, '%29');
+}
+
 function renderReviewsList(reviews) {
     const container = document.getElementById('reviewsListContainer');
     if (!container) return;
@@ -2102,10 +2125,14 @@ function renderReviewsList(reviews) {
     
     let html = '';
     reviews.forEach(r => {
-        const initial = r.displayName.charAt(0).toUpperCase();
+        const safeName = escapeHTML(r.displayName);
+        const safeComment = escapeHTML(r.comment);
+        const safeAvatar = safeAvatarUrl(r.avatar);
+        const initial = safeName.charAt(0).toUpperCase();
+        
         let avatarHtml = `<div class="review-user-avatar" style="width: 36px; height: 36px; font-size: 0.85rem; box-shadow: none;">${initial}</div>`;
-        if (r.avatar) {
-            avatarHtml = `<div class="review-user-avatar" style="width: 36px; height: 36px; box-shadow: none; background: url('${r.avatar}') center/cover no-repeat; color: transparent;"></div>`;
+        if (safeAvatar) {
+            avatarHtml = `<div class="review-user-avatar" style="width: 36px; height: 36px; box-shadow: none; background: url('${safeAvatar}') center/cover no-repeat; color: transparent;"></div>`;
         }
         
         let starsHtml = '';
@@ -2122,14 +2149,6 @@ function renderReviewsList(reviews) {
             const date = r.timestamp.toDate ? r.timestamp.toDate() : new Date(r.timestamp);
             timeStr = getRelativeTimeString(date);
         }
-        
-        // Escape HTML to block potential XSS injection
-        const safeComment = r.comment
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#039;');
             
         html += `
             <div class="review-item">
@@ -2138,13 +2157,15 @@ function renderReviewsList(reviews) {
                 </div>
                 <div class="review-content-col">
                     <div class="review-item-header">
-                        <span class="review-item-name">${r.displayName}</span>
+                        <span class="review-item-name">${safeName}</span>
                         <div class="review-item-meta">
                             <div class="review-item-stars">${starsHtml}</div>
                             <span class="review-item-time">${timeStr}</span>
                         </div>
                     </div>
-                    <p class="review-item-comment">${safeComment}</p>
+                    <div class="review-item-body">
+                        <p class="review-item-comment">${safeComment}</p>
+                    </div>
                 </div>
             </div>
         `;
@@ -2213,7 +2234,7 @@ function setupReviewSubmitListener() {
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Posting...';
         
         try {
-            const name = auth.currentUser.displayName || auth.currentUser.email.split('@')[0] || 'Anonymous';
+            const name = auth.currentUser.displayName || (auth.currentUser.email ? auth.currentUser.email.split('@')[0] : '') || 'Anonymous User';
             const avatar = auth.currentUser.photoURL || '';
             
             await db.collection('movie_reviews').add({
