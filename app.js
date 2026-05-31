@@ -1995,6 +1995,15 @@ window.initReviewsForMovie = function(movie) {
     currentActiveMovieId = movie.id;
     currentSelectedRating = 0;
     
+    // Self-healing dynamic UI correction: moves reviews to the correct full-width bottom layout
+    const reviewsSec = document.querySelector('.detail-reviews-section');
+    const container = document.querySelector('.detail-container');
+    if (reviewsSec && container) {
+        if (reviewsSec.parentElement !== container) {
+            container.appendChild(reviewsSec);
+        }
+    }
+    
     // Reset Stars Visuals
     const stars = document.querySelectorAll('.star-select-item');
     if (stars) {
