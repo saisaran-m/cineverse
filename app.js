@@ -608,6 +608,7 @@ async function showMovieDetail(movie) {
     $('#detailPoster').alt = movie.title;
     $('#detailTitle').textContent = movie.title;
     $('#detailRating').innerHTML = `<i class="fas fa-star"></i> ${movie.vote_average?.toFixed(1) || 'N/A'}`;
+    $('#detailRating').setAttribute('data-original-val', movie.vote_average?.toFixed(1) || '0.0');
     $('#detailYear').textContent = movie.release_date?.substring(0, 4) || 'N/A';
     $('#detailLang').textContent = movie.original_language?.toUpperCase() || '--';
     $('#detailOverview').textContent = movie.overview || 'No overview available.';
@@ -2056,8 +2057,8 @@ function subscribeToReviews(movieId) {
             if (snapshot && snapshot.docs) {
                 snapshot.docs.forEach(doc => {
                     const data = doc.data();
-                    // Filter matching reviews manually for seamless Firestore + local MockDB support!
-                    if (data.movieId === movieId) {
+                    // Filter matching reviews — use loose == to handle number/string mismatch
+                    if (data.movieId == movieId) {
                         reviews.push({
                             id: doc.id,
                             displayName: data.displayName || 'Anonymous User',
@@ -2173,18 +2174,15 @@ function updateCommunityRatingUI(count, totalRating) {
     const ratingBadge = document.getElementById('detailRating');
     if (!ratingBadge) return;
     
-    const originalText = ratingBadge.getAttribute('data-original-val') || ratingBadge.textContent.replace('★', '').trim();
-    if (!ratingBadge.getAttribute('data-original-val')) {
-        ratingBadge.setAttribute('data-original-val', originalText);
-    }
+    const tmdbScore = ratingBadge.getAttribute('data-original-val') || '0.0';
     
     if (count === 0) {
-        ratingBadge.innerHTML = `<i class="fas fa-star"></i> ${parseFloat(originalText).toFixed(1)}`;
+        ratingBadge.innerHTML = `<i class="fas fa-star"></i> ${parseFloat(tmdbScore).toFixed(1)}`;
         return;
     }
     
     const communityAvg = (totalRating / count).toFixed(1);
-    ratingBadge.innerHTML = `<i class="fas fa-star" style="color: #ffd700;"></i> ${parseFloat(originalText).toFixed(1)} <span style="margin: 0 6px; opacity: 0.3;">|</span> <i class="fas fa-users" style="color: var(--accent-primary);"></i> ${communityAvg} (${count})`;
+    ratingBadge.innerHTML = `<i class="fas fa-star" style="color: #ffd700;"></i> ${parseFloat(tmdbScore).toFixed(1)} <span style="margin: 0 6px; opacity: 0.3;">|</span> <i class="fas fa-users" style="color: var(--accent-primary);"></i> ${communityAvg} (${count})`;
 }
 
 function setupReviewSubmitListener() {
