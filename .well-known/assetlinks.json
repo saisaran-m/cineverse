@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.vercel.cineverse_sai.twa",
+      "sha256_cert_fingerprints": [
+        "1E:08:A9:03:AE:F9:C3:A7:21:51:0B:64:EC:76:4D:01:D3:D0:94:EB:95:41:61:B6:25:44:EA:8F:18:7B:59:53",
+        "38:DE:80:1C:F1:6E:72:84:CA:33:52:02:CE:76:7D:BC:C0:42:26:80:4E:07:2F:42:A3:E3:7A:92:33:FA:76:AB"
+      ]
+    }
+  }
+]
