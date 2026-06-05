@@ -1055,36 +1055,15 @@ function setupUserMenu() {
 
 
     // Firebase Auth Observer
-    const landingPage = document.getElementById('landingPage');
-    const mainAppElements = ['.navbar', '.bg-animation', '#heroSection', '#nowPlayingSection', '#trendingSection', '#topRatedSection', '#upcomingSection', '#genreSection', '#languageSection', '.site-footer', '#movieDetail', '#feedbackFab', '#feedbackModal'];
-
-    function showMainApp() {
-        if (landingPage) landingPage.style.display = 'none';
-        mainAppElements.forEach(sel => {
-            const el = document.querySelector(sel);
-            if (el) el.style.display = '';
-        });
-        document.body.style.opacity = '1';
-    }
-
-    function showLandingPage() {
-        if (landingPage) landingPage.style.display = 'flex';
-        mainAppElements.forEach(sel => {
-            const el = document.querySelector(sel);
-            if (el) el.style.display = 'none';
-        });
-        document.body.style.opacity = '1';
-    }
-
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            // Logged in — hide landing, reveal main app
+            // Logged in — reveal website, show avatar, hide login button
             localStorage.setItem('cineverse_logged_in', 'true');
             if (window.cineverse_redirect_timeout) {
                 clearTimeout(window.cineverse_redirect_timeout);
                 window.cineverse_redirect_timeout = null;
             }
-            showMainApp();
+            document.body.style.opacity = '1';
             loadRecentlyWatched();
             if (loginBtn) loginBtn.style.display = 'none';
             if (userProfile) {
@@ -1092,24 +1071,24 @@ function setupUserMenu() {
                 loadUserProfile(user);
             }
         } else {
-            // Not logged in — check backup flag first to prevent premature/false shows
+            // Not logged in — check backup flag first to prevent premature/false redirects
             if (localStorage.getItem('cineverse_logged_in') === 'true') {
                 console.log('⏳ Firebase auth initializing or slow... using backup flag.');
                 document.body.style.opacity = '1';
                 
-                // Wait up to 3 seconds for Firebase to initialize, if it still says null, show landing
+                // Wait up to 3 seconds for Firebase to initialize, if it still says null, redirect
                 if (!window.cineverse_redirect_timeout) {
                     window.cineverse_redirect_timeout = setTimeout(() => {
                         if (!auth.currentUser) {
-                            console.log('🎬 Backup flag expired, showing landing page');
+                            console.log('🚪 Backup flag expired, redirecting to login');
                             localStorage.removeItem('cineverse_logged_in');
-                            showLandingPage();
+                            window.location.replace('login.html');
                         }
                     }, 3000);
                 }
             } else {
-                // Not logged in and no backup flag — show landing page
-                showLandingPage();
+                // Not logged in and no backup flag — redirect immediately
+                window.location.replace('login.html');
             }
         }
     });
